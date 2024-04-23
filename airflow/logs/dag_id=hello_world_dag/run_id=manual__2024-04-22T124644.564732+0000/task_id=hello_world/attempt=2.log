@@ -1,0 +1,48 @@
+[2024-04-22T12:47:27.309+0000] {taskinstance.py:1957} INFO - Dependencies all met for dep_context=non-requeueable deps ti=<TaskInstance: hello_world_dag.hello_world manual__2024-04-22T12:46:44.564732+00:00 [queued]>
+[2024-04-22T12:47:27.347+0000] {taskinstance.py:1957} INFO - Dependencies all met for dep_context=requeueable deps ti=<TaskInstance: hello_world_dag.hello_world manual__2024-04-22T12:46:44.564732+00:00 [queued]>
+[2024-04-22T12:47:27.349+0000] {taskinstance.py:2171} INFO - Starting attempt 2 of 2
+[2024-04-22T12:47:27.393+0000] {taskinstance.py:2192} INFO - Executing <Task(PythonOperator): hello_world> on 2024-04-22 12:46:44.564732+00:00
+[2024-04-22T12:47:27.399+0000] {standard_task_runner.py:60} INFO - Started process 218 to run task
+[2024-04-22T12:47:27.409+0000] {standard_task_runner.py:87} INFO - Running: ['***', 'tasks', 'run', 'hello_world_dag', 'hello_world', 'manual__2024-04-22T12:46:44.564732+00:00', '--job-id', '5', '--raw', '--subdir', 'DAGS_FOLDER/hello_world_dag.py', '--cfg-path', '/tmp/tmpw7sbshbo']
+[2024-04-22T12:47:27.413+0000] {standard_task_runner.py:88} INFO - Job 5: Subtask hello_world
+[2024-04-22T12:47:27.452+0000] {logging_mixin.py:188} WARNING - /home/***/.local/lib/python3.8/site-packages/***/settings.py:195 DeprecationWarning: The sql_alchemy_conn option in [core] has been moved to the sql_alchemy_conn option in [database] - the old setting has been used, but please update your config.
+[2024-04-22T12:47:27.540+0000] {task_command.py:423} INFO - Running <TaskInstance: hello_world_dag.hello_world manual__2024-04-22T12:46:44.564732+00:00 [running]> on host c9c55c9ee351
+[2024-04-22T12:47:27.783+0000] {taskinstance.py:2481} INFO - Exporting env vars: AIRFLOW_CTX_DAG_OWNER='***' AIRFLOW_CTX_DAG_ID='hello_world_dag' AIRFLOW_CTX_TASK_ID='hello_world' AIRFLOW_CTX_EXECUTION_DATE='2024-04-22T12:46:44.564732+00:00' AIRFLOW_CTX_TRY_NUMBER='2' AIRFLOW_CTX_DAG_RUN_ID='manual__2024-04-22T12:46:44.564732+00:00'
+[2024-04-22T12:47:27.787+0000] {connection.py:408} WARNING - Failed to connect to localhost:9000
+Traceback (most recent call last):
+  File "/home/airflow/.local/lib/python3.8/site-packages/clickhouse_driver/connection.py", line 396, in connect
+    return self._init_connection(host, port)
+  File "/home/airflow/.local/lib/python3.8/site-packages/clickhouse_driver/connection.py", line 326, in _init_connection
+    self.socket = self._create_socket(host, port)
+  File "/home/airflow/.local/lib/python3.8/site-packages/clickhouse_driver/connection.py", line 297, in _create_socket
+    raise err
+  File "/home/airflow/.local/lib/python3.8/site-packages/clickhouse_driver/connection.py", line 288, in _create_socket
+    sock.connect(sa)
+OSError: [Errno 99] Cannot assign requested address
+[2024-04-22T12:47:27.790+0000] {taskinstance.py:2699} ERROR - Task failed with exception
+Traceback (most recent call last):
+  File "/home/airflow/.local/lib/python3.8/site-packages/airflow/models/taskinstance.py", line 433, in _execute_task
+    result = execute_callable(context=context, **execute_callable_kwargs)
+  File "/home/airflow/.local/lib/python3.8/site-packages/airflow/operators/python.py", line 199, in execute
+    return_value = self.execute_callable()
+  File "/home/airflow/.local/lib/python3.8/site-packages/airflow/operators/python.py", line 216, in execute_callable
+    return self.python_callable(*self.op_args, **self.op_kwargs)
+  File "/opt/airflow/dags/hello_world_dag.py", line 32, in hello_world_py
+    result = client.execute(
+  File "/home/airflow/.local/lib/python3.8/site-packages/clickhouse_driver/client.py", line 370, in execute
+    with self.disconnect_on_error(query, settings):
+  File "/usr/local/lib/python3.8/contextlib.py", line 113, in __enter__
+    return next(self.gen)
+  File "/home/airflow/.local/lib/python3.8/site-packages/clickhouse_driver/client.py", line 314, in disconnect_on_error
+    self.establish_connection(settings)
+  File "/home/airflow/.local/lib/python3.8/site-packages/clickhouse_driver/client.py", line 301, in establish_connection
+    self.connection.force_connect()
+  File "/home/airflow/.local/lib/python3.8/site-packages/clickhouse_driver/connection.py", line 254, in force_connect
+    self.connect()
+  File "/home/airflow/.local/lib/python3.8/site-packages/clickhouse_driver/connection.py", line 417, in connect
+    raise err
+clickhouse_driver.errors.NetworkError: Code: 210. Cannot assign requested address (localhost:9000)
+[2024-04-22T12:47:27.820+0000] {taskinstance.py:1138} INFO - Marking task as FAILED. dag_id=hello_world_dag, task_id=hello_world, execution_date=20240422T124644, start_date=20240422T124727, end_date=20240422T124727
+[2024-04-22T12:47:27.855+0000] {standard_task_runner.py:107} ERROR - Failed to execute job 5 for task hello_world (Code: 210. Cannot assign requested address (localhost:9000); 218)
+[2024-04-22T12:47:27.905+0000] {local_task_job_runner.py:234} INFO - Task exited with return code 1
+[2024-04-22T12:47:27.959+0000] {taskinstance.py:3281} INFO - 0 downstream tasks scheduled from follow-on schedule check

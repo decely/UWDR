@@ -1,0 +1,6 @@
+Логинка графаны:
+admin
+UWDR123
+
+Обновление контейнера:
+docker build -t extending_airflow .
