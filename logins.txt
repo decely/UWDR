@@ -1,0 +1,7 @@
+Grafana:
+admin
+UWDR123
+
+Airflow:
+airflow
+airflow
