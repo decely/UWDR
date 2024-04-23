@@ -1,3 +1,9 @@
 {
-  "test_var": "test"
+"cities_list":
+{
+  "cities":[
+    "Voronezh",
+    "Moscow"
+  ]
+}
 }
