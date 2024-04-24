@@ -13,9 +13,9 @@ CREATE TABLE IF NOT EXISTS allsh.ods_raw_weather_data ON cluster 'main'
 	create_dttm DateTime --now()
 )
 engine = ReplicatedMergeTree('/clickhouse/tabkes/{shard}/ods_raw_weather_data', '{replica}')
-ORDER BY (id, owd_id);
+ORDER BY (id, owd_id)
+TTL create_dttm + INTERVAL 3 MONTH;
 --Дистр таблица
 CREATE TABLE IF NOT EXISTS allsh.ods_raw_weather_data_distributed ON cluster 'main'
 AS allsh.ods_raw_weather_data
 ENGINE = Distributed('main', allsh, ods_raw_weather_data, rand());
-
