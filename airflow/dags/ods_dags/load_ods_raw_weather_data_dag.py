@@ -1,4 +1,3 @@
-import logging
 from datetime import datetime
 
 from airflow import DAG
@@ -8,10 +7,7 @@ from airflow.operators.python import PythonOperator
 
 from services.ods_services.load_ods_raw_weather import get_owd_api_and_id, load_raw_weather_data_by_api
 
-logger = logging.getLogger('airflow.task')
-
 cities_list = Variable.get(key='cities_list', deserialize_json=True)["cities"]
-
 
 dag_params = {
     'dag_id': 'load_ods_raw_weather_data_dag',

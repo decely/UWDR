@@ -21,4 +21,23 @@ VALUES
 (generateUUIDv4(), 'OpenWeatherMap', 'OWM', '9d0b56c67c3632e0a22741c5651aac5d', now()),
 (generateUUIDv4(), 'WeatherApi', 'WA', 'e1a7a445d0bb4648a3d132511242304', now());
 
-SELECT owd_name, owd_id, api from allrp.ds_dim_owd;
+
+--Таблица распределенных по колонкам погодных данных
+CREATE TABLE IF NOT EXISTS allrp.ds_dim_weather_data on cluster 'all-replicated'
+(
+	id UUID,
+	owd_id UUID,
+	city String,
+	temp Nullable(Float64), --В градусах по цельсию
+	wind_speed Nullable(Float64), --Метры в секунду
+	wind_direction String, --Юг, Север, Запад, Восток, Юго-Запад и т.д.
+	atmospheric_pressure Nullable(Int), -- в мм ртутного столба
+	humidity Nullable(Int), -- Влажность
+	cloud_level Nullable(Int), -- Облачность в процентах
+	general_condition String, -- Общее состояние (облачно, дождливо и т.д.)
+	create_dttm DateTime, --из предыдущей таблицы
+	upload_dttm DateTime --now()
+)
+engine = ReplicatedMergeTree('/clickhouse/tabkes/all-replicated/ds_dim_weather_data', '{replica}')
+ORDER BY (id, owd_id)
+TTL upload_dttm + INTERVAL 6 MONTH; --DM таблица будет на 1 год
