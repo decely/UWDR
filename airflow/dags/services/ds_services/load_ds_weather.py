@@ -1,9 +1,34 @@
 import logging
 
-
-from plugins.uwdr_hook import ch_run_query_empty
+from plugins.uwdr_hook import ch_run_query_empty, ch_run_query
 
 logger = logging.getLogger('airflow.task')
+
+def need_to_load_weather_data() -> str:
+    """Проверка на необходимость загружать погодные данные"""
+
+    sql = """
+    SELECT
+        id,
+        owd_id,
+    FROM allsh.ods_raw_weather_data_distributed as ods
+    prewhere (id, owd_id) not in(
+        select id, owd_id from allrp.ds_dim_weather_data
+    )
+    WHERE JSONExtractString(json_string, 'error') = ''
+    AND JSONExtractString(json_string, 'cod') in('200','')
+    """
+
+    result = ch_run_query(
+        sql=sql,
+    )
+
+    if len(result) != 0:
+        logger.info("Необходима загрузка новых погодных данных")
+        return 'load_needed'
+    else:
+        logger.info("Погодные данные актуальны, нет надобности в загрузке")
+        return 'finish'
 
 
 def load_weather_data_from_ods_to_ds() -> None:
