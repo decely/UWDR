@@ -2,9 +2,9 @@ from datetime import datetime
 
 from airflow import DAG
 from airflow.operators.empty import EmptyOperator
-from airflow.operators.python import PythonOperator
+from airflow.operators.python import PythonOperator, BranchPythonOperator
 
-from services.ds_services.load_ds_weather import load_weather_data_from_ods_to_ds
+from services.ds_services.load_ds_weather import load_weather_data_from_ods_to_ds, need_to_load_weather_data
 
 dag_params = {
     'dag_id': 'load_ds_weather_data_dag',
@@ -21,15 +21,25 @@ dag_params = {
 with DAG(**dag_params) as dag:  # type: ignore
     start = EmptyOperator(task_id='start')
 
-    #TODO Сделать проверку необходимости загрузки, разветвление если загрузка нужна
+    need_to_load_weather_data = BranchPythonOperator(
+        task_id='need_to_load_weather_data',
+        python_callable=need_to_load_weather_data,
+    )
+
+    load_needed = EmptyOperator(task_id='load_needed')
 
     load_weather_data_from_ods_to_ds = PythonOperator(
         task_id='load_weather_data_from_ods_to_ds',
         python_callable=load_weather_data_from_ods_to_ds,
     )
 
-    finish = EmptyOperator(task_id='finish')
+    finish = EmptyOperator(task_id='finish', trigger_rule='none_failed_min_one_success')
 
     start >> \
+        need_to_load_weather_data >> \
+        finish
+
+    need_to_load_weather_data >> \
+        load_needed >> \
         load_weather_data_from_ods_to_ds >> \
         finish

@@ -3,7 +3,6 @@ import json
 import requests
 from typing import List
 
-
 from plugins.uwdr_hook import ch_run_query, ch_run_query_empty
 
 logger = logging.getLogger('airflow.task')
@@ -33,7 +32,7 @@ def get_owd_api_and_id() -> List:
     return result
 
 
-def load_raw_weather_data_by_api(cities_list, **context) -> List:
+def load_raw_weather_data_by_api(cities_list, **context) -> None:
     """Получение сырых погодных данных через API"""
 
     api_info = context['ti'].xcom_pull(task_ids='get_owd_api_and_id')
