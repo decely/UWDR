@@ -40,4 +40,41 @@ CREATE TABLE IF NOT EXISTS allrp.ds_dim_weather_data on cluster 'all-replicated'
 )
 engine = ReplicatedMergeTree('/clickhouse/tabkes/all-replicated/ds_dim_weather_data', '{replica}')
 ORDER BY (id, owd_id)
-TTL upload_dttm + INTERVAL 6 MONTH; --DM таблица будет на 1 год
+TTL upload_dttm + INTERVAL 6 MONTH;
+
+
+--Буферная таблица переведенных даных DS слоя
+CREATE TABLE IF NOT EXISTS allrp.ds_buffer_translated_weather_data on cluster 'all-replicated'
+(
+	id UUID,
+	owd_id UUID,
+	lang String,
+	city String,
+	wind_direction String,
+	general_condition String
+)
+engine = ReplicatedMergeTree('/clickhouse/tabkes/all-replicated/ds_buffer_translated_weather_data', '{replica}')
+ORDER BY (id, owd_id);
+
+
+--Таблица переведенных данных DS слоя
+CREATE TABLE IF NOT EXISTS allrp.ds_dim_translated_weather_data on cluster 'all-replicated'
+(
+	id UUID,
+	owd_id UUID,
+	city String,
+	temp Nullable(Float64), --В градусах по цельсию
+	wind_speed Nullable(Float64), --Метры в секунду
+	wind_direction String, --Юг, Север, Запад, Восток, Юго-Запад и т.д.
+	atmospheric_pressure Nullable(Int), -- в мм ртутного столба
+	humidity Nullable(Int), -- Влажность
+	cloud_level Nullable(Int), -- Облачность в процентах
+	general_condition String, -- Общее состояние (облачно, дождливо и т.д.)
+	create_dttm DateTime, --из предыдущей таблицы
+	upload_dttm DateTime, --из предыдущей таблицы
+	translate_dttm DateTime, --now()
+	lang String
+)
+engine = ReplicatedMergeTree('/clickhouse/tabkes/all-replicated/ds_dim_translated_weather_data', '{replica}')
+ORDER BY (id, owd_id)
+TTL translate_dttm + INTERVAL 6 MONTH;
