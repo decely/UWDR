@@ -13,10 +13,10 @@ CREATE TABLE IF NOT EXISTS allrp.ds_dim_owd ON cluster 'all-replicated'
 	api String,
 	create_dttm DateTime --now()
 )
-engine = ReplicatedMergeTree('/clickhouse/tables/all-replicated/ds_dim_owd', '{replica}')
+engine = ReplicatedMergeTree('/clickhouse/tables/all-replicated/ds_dim_owd_v2', '{replica}')
 ORDER BY owd_id;
 --Заполнение операторов
-INSERT INTO allrp.ds_dim_owd
+INSERT INTO 
 VALUES
 (generateUUIDv4(), 'OpenWeatherMap', 'OWM', '9d0b56c67c3632e0a22741c5651aac5d', now()),
 (generateUUIDv4(), 'WeatherApi', 'WA', 'e1a7a445d0bb4648a3d132511242304', now());
@@ -26,6 +26,7 @@ VALUES
 CREATE TABLE IF NOT EXISTS allrp.ds_dim_weather_data on cluster 'all-replicated'
 (
 	id UUID,
+	ds_id UUID,
 	owd_id UUID,
 	city String,
 	temp Nullable(Float64), --В градусах по цельсию
@@ -38,8 +39,8 @@ CREATE TABLE IF NOT EXISTS allrp.ds_dim_weather_data on cluster 'all-replicated'
 	create_dttm DateTime, --из предыдущей таблицы
 	upload_dttm DateTime --now()
 )
-engine = ReplicatedMergeTree('/clickhouse/tabkes/all-replicated/ds_dim_weather_data', '{replica}')
-ORDER BY (id, owd_id)
+engine = ReplicatedMergeTree('/clickhouse/tables/all-replicated/ds_dim_weather_data_v2', '{replica}')
+ORDER BY (id, ds_id, owd_id)
 TTL upload_dttm + INTERVAL 6 MONTH;
 
 
@@ -53,7 +54,7 @@ CREATE TABLE IF NOT EXISTS allrp.ds_buffer_translated_weather_data on cluster 'a
 	wind_direction String,
 	general_condition String
 )
-engine = ReplicatedMergeTree('/clickhouse/tabkes/all-replicated/ds_buffer_translated_weather_data', '{replica}')
+engine = ReplicatedMergeTree('/clickhouse/tables/all-replicated/ds_buffer_translated_weather_data_v2', '{replica}')
 ORDER BY (id, owd_id);
 
 
@@ -61,6 +62,7 @@ ORDER BY (id, owd_id);
 CREATE TABLE IF NOT EXISTS allrp.ds_dim_translated_weather_data on cluster 'all-replicated'
 (
 	id UUID,
+	ds_id UUID,
 	owd_id UUID,
 	city String,
 	temp Nullable(Float64), --В градусах по цельсию
@@ -75,6 +77,6 @@ CREATE TABLE IF NOT EXISTS allrp.ds_dim_translated_weather_data on cluster 'all-
 	translate_dttm DateTime, --now()
 	lang String
 )
-engine = ReplicatedMergeTree('/clickhouse/tabkes/all-replicated/ds_dim_translated_weather_data', '{replica}')
-ORDER BY (id, owd_id)
+engine = ReplicatedMergeTree('/clickhouse/tables/all-replicated/ds_dim_translated_weather_data_v2', '{replica}')
+ORDER BY (id, ds_id, owd_id)
 TTL translate_dttm + INTERVAL 6 MONTH;
