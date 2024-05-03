@@ -23,6 +23,7 @@ def load_stg_weather_data_table() -> None:
     sql = """
     INSERT INTO main.stg_dm_weather_data_distributed(
         id,
+        ds_id,
         owd_id,
         city,
         temp,
@@ -39,6 +40,7 @@ def load_stg_weather_data_table() -> None:
     )
     SELECT
         id,
+        ds_id,
         owd_id,
         city,
         temp,
@@ -56,6 +58,7 @@ def load_stg_weather_data_table() -> None:
     UNION ALL
     SELECT
         id,
+        ds_id,
         owd_id,
         city,
         temp,
