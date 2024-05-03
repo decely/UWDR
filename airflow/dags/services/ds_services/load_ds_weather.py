@@ -37,6 +37,7 @@ def load_weather_data_from_ods_to_ds() -> None:
     sql = """
     INSERT INTO allrp.ds_dim_weather_data(
         id,
+        ds_id,
         owd_id,
         city,
         temp,
@@ -51,6 +52,7 @@ def load_weather_data_from_ods_to_ds() -> None:
     )
     SELECT
         id,
+        generateUUIDv4() as ds_id,
         owd_id,
         multiIf(
             owd_name = 'OpenWeatherMap', JSONExtractString(json_string,'name'),

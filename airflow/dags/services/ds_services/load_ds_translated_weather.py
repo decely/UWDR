@@ -159,6 +159,7 @@ def load_from_buffer_to_ds() -> None:
     sql = """
     INSERT INTO allrp.ds_dim_translated_weather_data(
         id,
+        ds_id,
         owd_id,
         city,
         temp,
@@ -175,6 +176,7 @@ def load_from_buffer_to_ds() -> None:
     )
     SELECT
         dim.id,
+        generateUUIDv4() as ds_id,
         dim.owd_id,
         buff.city,
         dim.temp,
