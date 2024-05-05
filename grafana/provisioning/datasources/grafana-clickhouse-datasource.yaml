@@ -1,0 +1,31 @@
+# Configuration file version
+apiVersion: 1
+
+# List of data sources to insert/update depending on what's
+# available in the database.
+datasources:
+  # <string, required> Sets the name you use to refer to
+  # the data source in panels and queries.
+  - name: grafana-clickhouse-datasource
+    # <string, required> Sets the data source type.
+    type: grafana-clickhouse-datasource
+    # <string, required> Sets the access mode, either
+    # proxy or direct (Server or Browser in the UI).
+    # Some data sources are incompatible with any setting
+    # but proxy (Server).
+    access: proxy
+    # <string> Sets a custom UID to reference this
+    # data source in other parts of the configuration.
+    # If not specified, Grafana generates one.
+    uid: adkreilk9migwa
+    # <string> Sets the data source's URL, including the
+    # port.
+    jsonData:
+        host: clickhouse01 # (required) server address.
+        port: 9000      # (required) server port. For native, defaults to 9440 secure and 9000 insecure. For HTTP, defaults to 8443 secure and 8123 insecure.
+    
+        protocol: native # (required) the protocol used for the connection. Can be set to "native" or "http".
+    
+    tlsCACert:     <string> # TLS CA certificate
+    tlsClientCert: <string> # TLS client certificate
+    tlsClientKey:  <string> # TLS client key
