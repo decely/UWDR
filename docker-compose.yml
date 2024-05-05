@@ -93,7 +93,9 @@ services:
         ipv4_address: 172.23.0.15
     volumes:
       - ./grafana/provisioning/datasources:/etc/grafana/provisioning/datasources
+      - ./grafana/provisioning/dashboards:/etc/grafana/provisioning/dashboards
       - ./grafana/lib/plugins:/var/lib/grafana/plugins
+      - ./grafana/lib/dashboards:/var/lib/grafana/dashboards
     ports:
       - "127.0.0.1:3000:3000"
     depends_on:

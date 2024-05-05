@@ -15,16 +15,17 @@
       }
     ]
   },
+  "description": "Температура по городам",
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "id": 1,
+  "id": 2,
   "links": [],
   "panels": [
     {
       "datasource": {
         "type": "grafana-clickhouse-datasource",
-        "uid": "edkpr0xrnr400e"
+        "uid": "adkreilk9migwa"
       },
       "fieldConfig": {
         "defaults": {
@@ -103,7 +104,7 @@
         {
           "datasource": {
             "type": "grafana-clickhouse-datasource",
-            "uid": "edkpr0xrnr400e"
+            "uid": "adkreilk9migwa"
           },
           "editorType": "sql",
           "format": 1,
@@ -119,7 +120,7 @@
           },
           "pluginVersion": "4.0.6",
           "queryType": "table",
-          "rawSql": "select create_dttm, city, temp from main.dm_weather_data_distributed dm\r\njoin allrp.ds_dim_owd dim on dm.owd_id = dim.owd_id\r\nwhere owd_name = 'OpenWeatherMap'\r\nand lang = 'en'",
+          "rawSql": "select create_dttm, city, temp from main.dm_weather_data_distributed dm\r\njoin allrp.ds_dim_owd dim on dm.owd_id = dim.owd_id\r\nwhere owd_name = 'OpenWeatherMap'\r\nand lang = 'en'\r\norder by city",
           "refId": "A"
         }
       ],
@@ -140,7 +141,7 @@
     {
       "datasource": {
         "type": "grafana-clickhouse-datasource",
-        "uid": "edkpr0xrnr400e"
+        "uid": "adkreilk9migwa"
       },
       "fieldConfig": {
         "defaults": {
@@ -219,7 +220,7 @@
         {
           "datasource": {
             "type": "grafana-clickhouse-datasource",
-            "uid": "edkpr0xrnr400e"
+            "uid": "adkreilk9migwa"
           },
           "editorType": "sql",
           "format": 1,
@@ -235,7 +236,7 @@
           },
           "pluginVersion": "4.0.6",
           "queryType": "table",
-          "rawSql": "select create_dttm, city, temp from main.dm_weather_data_distributed dm\r\njoin allrp.ds_dim_owd dim on dm.owd_id = dim.owd_id\r\nwhere owd_name = 'WeatherApi'\r\nand lang = 'en'",
+          "rawSql": "select create_dttm, city, temp from main.dm_weather_data_distributed dm\r\njoin allrp.ds_dim_owd dim on dm.owd_id = dim.owd_id\r\nwhere owd_name = 'WeatherApi'\r\nand lang = 'en'\r\norder by city",
           "refId": "A"
         }
       ],
@@ -267,6 +268,6 @@
   "timezone": "browser",
   "title": "Температура по городам",
   "uid": "fdkprnupq1la8e",
-  "version": 2,
+  "version": 4,
   "weekStart": ""
 }
