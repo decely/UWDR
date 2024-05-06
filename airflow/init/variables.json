@@ -5,5 +5,13 @@
     "Voronezh",
     "Moscow"
   ]
-}
+},
+"langs_list":
+  {
+    "langs":[
+      "ru",
+      "fr",
+      "de"
+    ]
+  }
 }

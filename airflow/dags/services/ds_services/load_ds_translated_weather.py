@@ -2,13 +2,15 @@ import logging
 from typing import List
 from googletrans import Translator
 
+from airflow.models import Variable
+
 from plugins.uwdr_hook import ch_run_query_empty, ch_run_query
 
 logger = logging.getLogger('airflow.task')
 
 translator = Translator()
 
-langs = ['ru','fr']
+langs = Variable.get(key='langs_list', deserialize_json=True)["langs"]
 
 def need_to_translate_weather_data():
     """Проверка на необходимость переводить погодные данные"""
