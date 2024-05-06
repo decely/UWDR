@@ -2,7 +2,7 @@ from datetime import datetime
 
 from airflow import DAG
 from airflow.operators.empty import EmptyOperator
-from airflow.operators.python import PythonOperator, BranchPythonOperator
+from airflow.operators.python import PythonOperator
 
 from services.dm_services.load_dm_weather import (
     truncate_stg_weather_data_table,
@@ -20,7 +20,7 @@ dag_params = {
     'catchup': False,
     'tags': ['dm', 'weather'],
 }
-    
+
 
 with DAG(**dag_params) as dag:  # type: ignore
     start = EmptyOperator(task_id='start')

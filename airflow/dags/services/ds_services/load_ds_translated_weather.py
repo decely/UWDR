@@ -12,6 +12,7 @@ translator = Translator()
 
 langs = Variable.get(key='langs_list', deserialize_json=True)["langs"]
 
+
 def need_to_translate_weather_data():
     """Проверка на необходимость переводить погодные данные"""
 
@@ -47,6 +48,7 @@ def need_to_translate_weather_data():
             load = 'finish'
 
     return load
+
 
 def truncate_buffer_table() -> None:
     """Очистка буферной таблицы для записи переведенных данных"""
@@ -136,7 +138,7 @@ def load_weather_data_to_buffer(**context) -> None:
 
     insert_sql = context['ti'].xcom_pull(task_ids='translate_ds_weather_data')
 
-    logger.info(f"Запись переведенных погодных данных в буферную таблицу...")
+    logger.info("Запись переведенных погодных данных в буферную таблицу...")
 
     for values_sql in insert_sql:
         sql = """
@@ -154,9 +156,10 @@ def load_weather_data_to_buffer(**context) -> None:
             sql=sql,
         )
 
+
 def load_from_buffer_to_ds() -> None:
 
-    logger.info(f"Запись переведенных погодных данных в основную таблицу...")
+    logger.info("Запись переведенных погодных данных в основную таблицу...")
 
     sql = """
     INSERT INTO allrp.ds_dim_translated_weather_data(

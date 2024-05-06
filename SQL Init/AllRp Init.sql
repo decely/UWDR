@@ -7,11 +7,11 @@ CREATE DATABASE IF NOT EXISTS allrp on cluster 'all-replicated';
 --Таблица операторов погодных данных
 CREATE TABLE IF NOT EXISTS allrp.ds_dim_owd ON cluster 'all-replicated'
 (
-	owd_id UUID, --Оператор погодных данных (weather api)
+	owd_id UUID,
 	owd_name String,
 	owd_short_name String,
 	api String,
-	create_dttm DateTime --now()
+	create_dttm DateTime
 )
 engine = ReplicatedMergeTree('/clickhouse/tables/all-replicated/ds_dim_owd_v2', '{replica}')
 ORDER BY owd_id;
@@ -29,15 +29,15 @@ CREATE TABLE IF NOT EXISTS allrp.ds_dim_weather_data on cluster 'all-replicated'
 	ds_id UUID,
 	owd_id UUID,
 	city String,
-	temp Nullable(Float64), --В градусах по цельсию
-	wind_speed Nullable(Float64), --Метры в секунду
-	wind_direction String, --Юг, Север, Запад, Восток, Юго-Запад и т.д.
-	atmospheric_pressure Nullable(Int), -- в мм ртутного столба
-	humidity Nullable(Int), -- Влажность
-	cloud_level Nullable(Int), -- Облачность в процентах
-	general_condition String, -- Общее состояние (облачно, дождливо и т.д.)
-	create_dttm DateTime, --из предыдущей таблицы
-	upload_dttm DateTime --now()
+	temp Nullable(Float64),
+	wind_speed Nullable(Float64),
+	wind_direction String,
+	atmospheric_pressure Nullable(Int),
+	humidity Nullable(Int),
+	cloud_level Nullable(Int),
+	general_condition String,
+	create_dttm DateTime,
+	upload_dttm DateTime
 )
 engine = ReplicatedMergeTree('/clickhouse/tables/all-replicated/ds_dim_weather_data_v2', '{replica}')
 ORDER BY (id, ds_id, owd_id)
@@ -65,16 +65,16 @@ CREATE TABLE IF NOT EXISTS allrp.ds_dim_translated_weather_data on cluster 'all-
 	ds_id UUID,
 	owd_id UUID,
 	city String,
-	temp Nullable(Float64), --В градусах по цельсию
-	wind_speed Nullable(Float64), --Метры в секунду
-	wind_direction String, --Юг, Север, Запад, Восток, Юго-Запад и т.д.
-	atmospheric_pressure Nullable(Int), -- в мм ртутного столба
-	humidity Nullable(Int), -- Влажность
-	cloud_level Nullable(Int), -- Облачность в процентах
-	general_condition String, -- Общее состояние (облачно, дождливо и т.д.)
-	create_dttm DateTime, --из предыдущей таблицы
-	upload_dttm DateTime, --из предыдущей таблицы
-	translate_dttm DateTime, --now()
+	temp Nullable(Float64),
+	wind_speed Nullable(Float64),
+	wind_direction String,
+	atmospheric_pressure Nullable(Int),
+	humidity Nullable(Int),
+	cloud_level Nullable(Int),
+	general_condition String,
+	create_dttm DateTime,
+	upload_dttm DateTime,
+	translate_dttm DateTime,
 	lang String
 )
 engine = ReplicatedMergeTree('/clickhouse/tables/all-replicated/ds_dim_translated_weather_data_v2', '{replica}')
