@@ -8,9 +8,9 @@ CREATE DATABASE IF NOT EXISTS allsh on cluster 'all-sharded';
 CREATE TABLE IF NOT EXISTS allsh.ods_raw_weather_data ON cluster 'main'
 (
 	id UUID,
-	owd_id UUID, --Оператор погодных данных (weather api)
+	owd_id UUID,
 	json_string String,
-	create_dttm DateTime --now()
+	create_dttm DateTime
 )
 engine = ReplicatedMergeTree('/clickhouse/tabkes/{shard}/ods_raw_weather_data', '{replica}')
 ORDER BY (id, owd_id)

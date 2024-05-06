@@ -4,6 +4,7 @@ from plugins.uwdr_hook import ch_run_query_empty, ch_run_query
 
 logger = logging.getLogger('airflow.task')
 
+
 def need_to_load_weather_data() -> str:
     """Проверка на необходимость загружать погодные данные"""
 

@@ -19,7 +19,6 @@ dag_params = {
     'catchup': False,
     'tags': ['ods', 'raw', 'weather'],
 }
-    
 
 with DAG(**dag_params) as dag:  # type: ignore
     start = EmptyOperator(task_id='start')

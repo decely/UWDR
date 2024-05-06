@@ -10,15 +10,15 @@ logger = logging.getLogger('airflow.task')
 
 def get_owd_api_and_id() -> List:
     """Получение owd_name, owd_id и api из таблицы ds_dim_owd"""
-    
+
     sql = """
-    SELECT 
+    SELECT
         owd_name,
         owd_id::String,
         api
     from allrp.ds_dim_owd
     """
-    
+
     result = ch_run_query(
         sql=sql,
     )
