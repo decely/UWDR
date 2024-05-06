@@ -15,11 +15,11 @@
       }
     ]
   },
-  "description": "",
+  "description": "Атмосферное давление по городам",
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "id": 4,
+  "id": 8,
   "links": [],
   "panels": [
     {
@@ -37,7 +37,7 @@
             "axisBorderShow": false,
             "axisCenteredZero": false,
             "axisColorMode": "series",
-            "axisLabel": "Скорость ветра (м/с)",
+            "axisLabel": "Давление (мм. рт. ст.)",
             "axisPlacement": "auto",
             "barAlignment": 0,
             "drawStyle": "line",
@@ -121,11 +121,11 @@
           },
           "pluginVersion": "4.0.6",
           "queryType": "table",
-          "rawSql": "select create_dttm, city, wind_speed as `Скорость ветра` from main.dm_weather_data_distributed dm\r\njoin allrp.ds_dim_owd dim on dm.owd_id = dim.owd_id\r\nwhere owd_name = 'OpenWeatherMap'\r\nand lang = 'ru'\r\norder by city",
+          "rawSql": "select create_dttm, city, atmospheric_pressure as `Давление` from main.dm_weather_data_distributed dm\r\njoin allrp.ds_dim_owd dim on dm.owd_id = dim.owd_id\r\nwhere owd_name = 'OpenWeatherMap'\r\nand lang = 'ru'\r\norder by city",
           "refId": "A"
         }
       ],
-      "title": "Скорость ветра (м/с) по источнику OpenWeatherMap",
+      "title": "Атмосферное давление (мм. рт. ст.) по источнику OpenWeatherMap",
       "transformations": [
         {
           "id": "partitionByValues",
@@ -154,7 +154,7 @@
             "axisBorderShow": false,
             "axisCenteredZero": false,
             "axisColorMode": "series",
-            "axisLabel": "Скорость ветра (м/с)",
+            "axisLabel": "Давление (мм. рт. ст.)",
             "axisPlacement": "auto",
             "barAlignment": 0,
             "drawStyle": "line",
@@ -238,11 +238,11 @@
           },
           "pluginVersion": "4.0.6",
           "queryType": "table",
-          "rawSql": "select create_dttm, city, wind_speed as `Скорость ветра` from main.dm_weather_data_distributed dm\r\njoin allrp.ds_dim_owd dim on dm.owd_id = dim.owd_id\r\nwhere owd_name = 'WeatherApi'\r\nand lang = 'ru'\r\norder by city",
+          "rawSql": "select create_dttm, city, atmospheric_pressure as `Давление` from main.dm_weather_data_distributed dm\r\njoin allrp.ds_dim_owd dim on dm.owd_id = dim.owd_id\r\nwhere owd_name = 'WeatherApi'\r\nand lang = 'ru'\r\norder by city",
           "refId": "A"
         }
       ],
-      "title": "Скорость ветра (м/с) по источнику WeatherApi",
+      "title": "Атмосферное давление (мм. рт. ст.) по источнику WeatherApi",
       "transformations": [
         {
           "id": "partitionByValues",
@@ -328,11 +328,11 @@
           },
           "pluginVersion": "4.0.6",
           "queryType": "table",
-          "rawSql": "SELECT city, floor(avg(wind_speed),2) as `Средняя скорость ветра` from main.dm_weather_data_distributed dm\r\njoin allrp.ds_dim_owd dim on dm.owd_id = dim.owd_id\r\nwhere lang = 'ru'\r\nand owd_name = 'OpenWeatherMap'\r\ngroup by city\r\norder by `Средняя скорость ветра`",
+          "rawSql": "SELECT city, floor(avg(atmospheric_pressure),2) as value from main.dm_weather_data_distributed dm\r\njoin allrp.ds_dim_owd dim on dm.owd_id = dim.owd_id\r\nwhere lang = 'ru'\r\nand owd_name = 'OpenWeatherMap'\r\nand create_dttm BETWEEN parseDateTime64BestEffortOrZero('${__from:date}') AND parseDateTime64BestEffortOrZero('${__to:date}')\r\ngroup by city\r\norder by value",
           "refId": "A"
         }
       ],
-      "title": "Средняя скорость ветра (м/с) по источнику OpenWeatherMap",
+      "title": "Среднее атмосферное давление (мм. рт. ст) по источнику OpenWeatherMap",
       "type": "bargauge"
     },
     {
@@ -407,11 +407,11 @@
           },
           "pluginVersion": "4.0.6",
           "queryType": "table",
-          "rawSql": "SELECT city, floor(avg(wind_speed),2) as `Средняя скорость ветра` from main.dm_weather_data_distributed dm\r\njoin allrp.ds_dim_owd dim on dm.owd_id = dim.owd_id\r\nwhere lang = 'ru'\r\nand owd_name = 'WeatherApi'\r\ngroup by city\r\norder by `Средняя скорость ветра`",
+          "rawSql": "SELECT city, floor(avg(atmospheric_pressure),2) as value from main.dm_weather_data_distributed dm\r\njoin allrp.ds_dim_owd dim on dm.owd_id = dim.owd_id\r\nwhere lang = 'ru'\r\nand owd_name = 'WeatherApi'\r\nand create_dttm BETWEEN parseDateTime64BestEffortOrZero('${__from:date}') AND parseDateTime64BestEffortOrZero('${__to:date}')\r\ngroup by city\r\norder by value",
           "refId": "A"
         }
       ],
-      "title": "Средняя скорость ветра (м/с) по источнику WeatherApi",
+      "title": "Среднее атмосферное давление (мм. рт. ст.) по источнику WeatherApi",
       "type": "bargauge"
     },
     {
@@ -448,7 +448,7 @@
         "x": 0,
         "y": 11
       },
-      "id": 10,
+      "id": 6,
       "options": {
         "displayMode": "lcd",
         "maxVizHeight": 300,
@@ -486,11 +486,11 @@
           },
           "pluginVersion": "4.0.6",
           "queryType": "table",
-          "rawSql": "SELECT city, floor(max(wind_speed),2) as `Средняя скорость ветра` from main.dm_weather_data_distributed dm\r\njoin allrp.ds_dim_owd dim on dm.owd_id = dim.owd_id\r\nwhere lang = 'ru'\r\nand owd_name = 'OpenWeatherMap'\r\ngroup by city\r\norder by `Средняя скорость ветра`",
+          "rawSql": "SELECT city, floor(max(atmospheric_pressure),2) as value from main.dm_weather_data_distributed dm\r\njoin allrp.ds_dim_owd dim on dm.owd_id = dim.owd_id\r\nwhere lang = 'ru'\r\nand owd_name = 'OpenWeatherMap'\r\nand create_dttm BETWEEN parseDateTime64BestEffortOrZero('${__from:date}') AND parseDateTime64BestEffortOrZero('${__to:date}')\r\ngroup by city\r\norder by value",
           "refId": "A"
         }
       ],
-      "title": "Максимальная скорость ветра (м/с) по источнику OpenWeatherMap",
+      "title": "Максимальное атмосферное давление (мм.рт.ст) по источнику OpenWeatherMap",
       "type": "bargauge"
     },
     {
@@ -526,266 +526,23 @@
         "w": 12,
         "x": 12,
         "y": 11
-      },
-      "id": 11,
-      "options": {
-        "displayMode": "lcd",
-        "maxVizHeight": 300,
-        "minVizHeight": 16,
-        "minVizWidth": 8,
-        "namePlacement": "auto",
-        "orientation": "horizontal",
-        "reduceOptions": {
-          "calcs": [],
-          "fields": "",
-          "values": true
-        },
-        "showUnfilled": true,
-        "sizing": "auto",
-        "valueMode": "color"
-      },
-      "pluginVersion": "10.4.2",
-      "targets": [
-        {
-          "datasource": {
-            "type": "grafana-clickhouse-datasource",
-            "uid": "adkreilk9migwa"
-          },
-          "editorType": "sql",
-          "format": 1,
-          "meta": {
-            "builderOptions": {
-              "columns": [],
-              "database": "",
-              "limit": 1000,
-              "mode": "list",
-              "queryType": "table",
-              "table": ""
-            }
-          },
-          "pluginVersion": "4.0.6",
-          "queryType": "table",
-          "rawSql": "SELECT city, floor(max(wind_speed),2) as `Средняя скорость ветра` from main.dm_weather_data_distributed dm\r\njoin allrp.ds_dim_owd dim on dm.owd_id = dim.owd_id\r\nwhere lang = 'ru'\r\nand owd_name = 'WeatherApi'\r\ngroup by city\r\norder by `Средняя скорость ветра`",
-          "refId": "A"
-        }
-      ],
-      "title": "Максимальная скорость ветра (м/с) по источнику WeatherApi",
-      "type": "bargauge"
-    },
-    {
-      "datasource": {
-        "type": "grafana-clickhouse-datasource",
-        "uid": "adkreilk9migwa"
-      },
-      "description": "",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "continuous-GrYlRd"
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          }
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 3,
-        "w": 12,
-        "x": 0,
-        "y": 14
-      },
-      "id": 13,
-      "options": {
-        "displayMode": "lcd",
-        "maxVizHeight": 300,
-        "minVizHeight": 16,
-        "minVizWidth": 8,
-        "namePlacement": "auto",
-        "orientation": "horizontal",
-        "reduceOptions": {
-          "calcs": [],
-          "fields": "",
-          "values": true
-        },
-        "showUnfilled": true,
-        "sizing": "auto",
-        "valueMode": "color"
-      },
-      "pluginVersion": "10.4.2",
-      "targets": [
-        {
-          "datasource": {
-            "type": "grafana-clickhouse-datasource",
-            "uid": "adkreilk9migwa"
-          },
-          "editorType": "sql",
-          "format": 1,
-          "meta": {
-            "builderOptions": {
-              "columns": [],
-              "database": "",
-              "limit": 1000,
-              "mode": "list",
-              "queryType": "table",
-              "table": ""
-            }
-          },
-          "pluginVersion": "4.0.6",
-          "queryType": "table",
-          "rawSql": "SELECT city, floor(min(wind_speed),2) as `Средняя скорость ветра` from main.dm_weather_data_distributed dm\r\njoin allrp.ds_dim_owd dim on dm.owd_id = dim.owd_id\r\nwhere lang = 'ru'\r\nand owd_name = 'OpenWeatherMap'\r\ngroup by city\r\norder by `Средняя скорость ветра`",
-          "refId": "A"
-        }
-      ],
-      "title": "Минимальная скорость ветра (м/с) по источнику OpenWeatherMap",
-      "type": "bargauge"
-    },
-    {
-      "datasource": {
-        "type": "grafana-clickhouse-datasource",
-        "uid": "adkreilk9migwa"
-      },
-      "description": "",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "continuous-GrYlRd"
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          }
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 3,
-        "w": 12,
-        "x": 12,
-        "y": 14
-      },
-      "id": 12,
-      "options": {
-        "displayMode": "lcd",
-        "maxVizHeight": 300,
-        "minVizHeight": 16,
-        "minVizWidth": 8,
-        "namePlacement": "auto",
-        "orientation": "horizontal",
-        "reduceOptions": {
-          "calcs": [],
-          "fields": "",
-          "values": true
-        },
-        "showUnfilled": true,
-        "sizing": "auto",
-        "valueMode": "color"
-      },
-      "pluginVersion": "10.4.2",
-      "targets": [
-        {
-          "datasource": {
-            "type": "grafana-clickhouse-datasource",
-            "uid": "adkreilk9migwa"
-          },
-          "editorType": "sql",
-          "format": 1,
-          "meta": {
-            "builderOptions": {
-              "columns": [],
-              "database": "",
-              "limit": 1000,
-              "mode": "list",
-              "queryType": "table",
-              "table": ""
-            }
-          },
-          "pluginVersion": "4.0.6",
-          "queryType": "table",
-          "rawSql": "SELECT city, floor(min(wind_speed),2) as `Средняя скорость ветра` from main.dm_weather_data_distributed dm\r\njoin allrp.ds_dim_owd dim on dm.owd_id = dim.owd_id\r\nwhere lang = 'ru'\r\nand owd_name = 'WeatherApi'\r\ngroup by city\r\norder by `Средняя скорость ветра`",
-          "refId": "A"
-        }
-      ],
-      "title": "Минимальная скорость ветра (м/с) по источнику WeatherApi",
-      "type": "bargauge"
-    },
-    {
-      "datasource": {
-        "type": "grafana-clickhouse-datasource",
-        "uid": "adkreilk9migwa"
-      },
-      "description": "",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "fillOpacity": 20,
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "insertNulls": false,
-            "lineWidth": 1,
-            "spanNulls": false
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              }
-            ]
-          }
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 7,
-        "w": 24,
-        "x": 0,
-        "y": 17
       },
       "id": 5,
       "options": {
-        "alignValue": "left",
-        "legend": {
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": false
+        "displayMode": "lcd",
+        "maxVizHeight": 300,
+        "minVizHeight": 16,
+        "minVizWidth": 8,
+        "namePlacement": "auto",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [],
+          "fields": "",
+          "values": true
         },
-        "mergeValues": true,
-        "rowHeight": 0.8,
-        "showValue": "always",
-        "tooltip": {
-          "mode": "single",
-          "sort": "none"
-        }
+        "showUnfilled": true,
+        "sizing": "auto",
+        "valueMode": "color"
       },
       "pluginVersion": "10.4.2",
       "targets": [
@@ -808,26 +565,12 @@
           },
           "pluginVersion": "4.0.6",
           "queryType": "table",
-          "rawSql": "SELECT wind_direction as `Направление ветра`, create_dttm, city from main.dm_weather_data_distributed dm\r\njoin allrp.ds_dim_owd dim on dm.owd_id = dim.owd_id\r\nwhere owd_name = 'OpenWeatherMap'\r\nand lang = 'ru'\r\norder by city",
+          "rawSql": "SELECT city, floor(max(atmospheric_pressure),2) as value from main.dm_weather_data_distributed dm\r\njoin allrp.ds_dim_owd dim on dm.owd_id = dim.owd_id\r\nwhere lang = 'ru'\r\nand owd_name = 'WeatherApi'\r\nand create_dttm BETWEEN parseDateTime64BestEffortOrZero('${__from:date}') AND parseDateTime64BestEffortOrZero('${__to:date}')\r\ngroup by city\r\norder by value",
           "refId": "A"
         }
       ],
-      "title": "Направление ветра по источнику OpenWeatherMap",
-      "transformations": [
-        {
-          "id": "partitionByValues",
-          "options": {
-            "fields": [
-              "city"
-            ],
-            "keepFields": false,
-            "naming": {
-              "asLabels": false
-            }
-          }
-        }
-      ],
-      "type": "state-timeline"
+      "title": "Максимальное атмосферное давление (мм. рт. ст.) по источнику WeatherApi",
+      "type": "bargauge"
     },
     {
       "datasource": {
@@ -838,113 +581,7 @@
       "fieldConfig": {
         "defaults": {
           "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "fillOpacity": 20,
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "insertNulls": false,
-            "lineWidth": 1,
-            "spanNulls": false
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              }
-            ]
-          }
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 7,
-        "w": 24,
-        "x": 0,
-        "y": 24
-      },
-      "id": 7,
-      "options": {
-        "alignValue": "left",
-        "legend": {
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": false
-        },
-        "mergeValues": true,
-        "rowHeight": 0.8,
-        "showValue": "always",
-        "tooltip": {
-          "mode": "single",
-          "sort": "none"
-        }
-      },
-      "pluginVersion": "10.4.2",
-      "targets": [
-        {
-          "datasource": {
-            "type": "grafana-clickhouse-datasource",
-            "uid": "adkreilk9migwa"
-          },
-          "editorType": "sql",
-          "format": 1,
-          "meta": {
-            "builderOptions": {
-              "columns": [],
-              "database": "",
-              "limit": 1000,
-              "mode": "list",
-              "queryType": "table",
-              "table": ""
-            }
-          },
-          "pluginVersion": "4.0.6",
-          "queryType": "table",
-          "rawSql": "SELECT wind_direction as `Направление ветра`, create_dttm, city from main.dm_weather_data_distributed dm\r\njoin allrp.ds_dim_owd dim on dm.owd_id = dim.owd_id\r\nwhere owd_name = 'WeatherApi'\r\nand lang = 'ru'\r\norder by city",
-          "refId": "A"
-        }
-      ],
-      "title": "Направление ветра по источнику WeatherApi",
-      "transformations": [
-        {
-          "id": "partitionByValues",
-          "options": {
-            "fields": [
-              "city"
-            ],
-            "keepFields": false,
-            "naming": {
-              "asLabels": false
-            }
-          }
-        }
-      ],
-      "type": "state-timeline"
-    },
-    {
-      "datasource": {
-        "type": "grafana-clickhouse-datasource",
-        "uid": "adkreilk9migwa"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "align": "left",
-            "cellOptions": {
-              "type": "color-text"
-            },
-            "filterable": false,
-            "inspect": false
+            "mode": "continuous-GrYlRd"
           },
           "mappings": [],
           "thresholds": {
@@ -964,24 +601,27 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 6,
+        "h": 3,
         "w": 12,
         "x": 0,
-        "y": 31
+        "y": 14
       },
       "id": 8,
       "options": {
-        "cellHeight": "sm",
-        "footer": {
-          "countRows": false,
-          "enablePagination": false,
+        "displayMode": "lcd",
+        "maxVizHeight": 300,
+        "minVizHeight": 16,
+        "minVizWidth": 8,
+        "namePlacement": "auto",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [],
           "fields": "",
-          "reducer": [
-            "sum"
-          ],
-          "show": false
+          "values": true
         },
-        "showHeader": true
+        "showUnfilled": true,
+        "sizing": "auto",
+        "valueMode": "color"
       },
       "pluginVersion": "10.4.2",
       "targets": [
@@ -1004,30 +644,23 @@
           },
           "pluginVersion": "4.0.6",
           "queryType": "table",
-          "rawSql": "SELECT city as `Город`, argMax(wind_direction, num) AS `Направление ветра` from(\r\n  SELECT city, wind_direction, COUNT(wind_direction) AS num FROM main.dm_weather_data_distributed dm\r\n  join allrp.ds_dim_owd dim on dm.owd_id = dim.owd_id\r\n  WHERE lang = 'ru'\r\n  AND owd_name = 'OpenWeatherMap'\r\n  GROUP BY city, wind_direction\r\n  ORDER BY city, num DESC)\r\nGROUP BY city",
+          "rawSql": "SELECT city, floor(min(atmospheric_pressure),2) as value from main.dm_weather_data_distributed dm\r\njoin allrp.ds_dim_owd dim on dm.owd_id = dim.owd_id\r\nwhere lang = 'ru'\r\nand owd_name = 'OpenWeatherMap'\r\nand create_dttm BETWEEN parseDateTime64BestEffortOrZero('${__from:date}') AND parseDateTime64BestEffortOrZero('${__to:date}')\r\ngroup by city\r\norder by value",
           "refId": "A"
         }
       ],
-      "title": "Среднее направление ветра по источнику OpenWeatherMap",
-      "type": "table"
+      "title": "Минимальное атмосферное давление (мм. рт. ст.) по источнику OpenWeatherMap",
+      "type": "bargauge"
     },
     {
       "datasource": {
         "type": "grafana-clickhouse-datasource",
         "uid": "adkreilk9migwa"
       },
+      "description": "",
       "fieldConfig": {
         "defaults": {
           "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "align": "left",
-            "cellOptions": {
-              "type": "color-text"
-            },
-            "filterable": false,
-            "inspect": false
+            "mode": "continuous-GrYlRd"
           },
           "mappings": [],
           "thresholds": {
@@ -1047,24 +680,27 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 6,
+        "h": 3,
         "w": 12,
         "x": 12,
-        "y": 31
+        "y": 14
       },
-      "id": 9,
+      "id": 7,
       "options": {
-        "cellHeight": "sm",
-        "footer": {
-          "countRows": false,
-          "enablePagination": false,
+        "displayMode": "lcd",
+        "maxVizHeight": 300,
+        "minVizHeight": 16,
+        "minVizWidth": 8,
+        "namePlacement": "auto",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [],
           "fields": "",
-          "reducer": [
-            "sum"
-          ],
-          "show": false
+          "values": true
         },
-        "showHeader": true
+        "showUnfilled": true,
+        "sizing": "auto",
+        "valueMode": "color"
       },
       "pluginVersion": "10.4.2",
       "targets": [
@@ -1087,12 +723,12 @@
           },
           "pluginVersion": "4.0.6",
           "queryType": "table",
-          "rawSql": "SELECT city as `Город`, argMax(wind_direction, num) AS `Направление ветра` from(\r\n  SELECT city, wind_direction, COUNT(wind_direction) AS num FROM main.dm_weather_data_distributed dm\r\n  join allrp.ds_dim_owd dim on dm.owd_id = dim.owd_id\r\n  WHERE lang = 'ru'\r\n  AND owd_name = 'WeatherApi'\r\n  GROUP BY city, wind_direction\r\n  ORDER BY city, num DESC)\r\nGROUP BY city",
+          "rawSql": "SELECT city, floor(min(atmospheric_pressure),2) as value from main.dm_weather_data_distributed dm\r\njoin allrp.ds_dim_owd dim on dm.owd_id = dim.owd_id\r\nwhere lang = 'ru'\r\nand owd_name = 'WeatherApi'\r\nand create_dttm BETWEEN parseDateTime64BestEffortOrZero('${__from:date}') AND parseDateTime64BestEffortOrZero('${__to:date}')\r\ngroup by city\r\norder by value",
           "refId": "A"
         }
       ],
-      "title": "Среднее направление ветра по источнику WeatherApi",
-      "type": "table"
+      "title": "Минимальное атмосферное давление (мм. рт. ст.) по источнику WeatherApi",
+      "type": "bargauge"
     }
   ],
   "schemaVersion": 39,
@@ -1106,8 +742,8 @@
   },
   "timepicker": {},
   "timezone": "browser",
-  "title": "Ветер по городам",
-  "uid": "fdkrqwiwksv0ge",
-  "version": 20,
+  "title": "Атмосферное давление по городам",
+  "uid": "ddkvi01zlnvggd",
+  "version": 12,
   "weekStart": ""
 }

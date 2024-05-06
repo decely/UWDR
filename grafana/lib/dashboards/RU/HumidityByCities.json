@@ -15,11 +15,11 @@
       }
     ]
   },
-  "description": "Температура по городам",
+  "description": "Влажность по городам",
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "id": 2,
+  "id": 5,
   "links": [],
   "panels": [
     {
@@ -37,7 +37,7 @@
             "axisBorderShow": false,
             "axisCenteredZero": false,
             "axisColorMode": "series",
-            "axisLabel": "Температура (°C)",
+            "axisLabel": "Влажность (%)",
             "axisPlacement": "auto",
             "barAlignment": 0,
             "drawStyle": "line",
@@ -121,11 +121,11 @@
           },
           "pluginVersion": "4.0.6",
           "queryType": "table",
-          "rawSql": "select create_dttm, city, temp as `Температура` from main.dm_weather_data_distributed dm\r\njoin allrp.ds_dim_owd dim on dm.owd_id = dim.owd_id\r\nwhere owd_name = 'OpenWeatherMap'\r\nand lang = 'ru'\r\norder by city",
+          "rawSql": "select create_dttm, city, humidity as `Влажность` from main.dm_weather_data_distributed dm\r\njoin allrp.ds_dim_owd dim on dm.owd_id = dim.owd_id\r\nwhere owd_name = 'OpenWeatherMap'\r\nand lang = 'ru'\r\norder by city",
           "refId": "A"
         }
       ],
-      "title": "Температура (°C) по источнику OpenWeatherMap",
+      "title": "Влажность (%) по источнику OpenWeatherMap",
       "transformations": [
         {
           "id": "partitionByValues",
@@ -154,7 +154,7 @@
             "axisBorderShow": false,
             "axisCenteredZero": false,
             "axisColorMode": "series",
-            "axisLabel": "Температура (°C)",
+            "axisLabel": "Влажность (%)",
             "axisPlacement": "auto",
             "barAlignment": 0,
             "drawStyle": "line",
@@ -238,11 +238,11 @@
           },
           "pluginVersion": "4.0.6",
           "queryType": "table",
-          "rawSql": "select create_dttm, city, temp as `Температура` from main.dm_weather_data_distributed dm\r\njoin allrp.ds_dim_owd dim on dm.owd_id = dim.owd_id\r\nwhere owd_name = 'WeatherApi'\r\nand lang = 'ru'\r\norder by city",
+          "rawSql": "select create_dttm, city, humidity as `Влажность` from main.dm_weather_data_distributed dm\r\njoin allrp.ds_dim_owd dim on dm.owd_id = dim.owd_id\r\nwhere owd_name = 'WeatherApi'\r\nand lang = 'ru'\r\norder by city",
           "refId": "A"
         }
       ],
-      "title": "Температура (°С) по источнику WeatherApi",
+      "title": "Влажность (%) по источнику WeatherApi",
       "transformations": [
         {
           "id": "partitionByValues",
@@ -328,11 +328,11 @@
           },
           "pluginVersion": "4.0.6",
           "queryType": "table",
-          "rawSql": "SELECT city, floor(avg(temp),2) as value from main.dm_weather_data_distributed dm\r\njoin allrp.ds_dim_owd dim on dm.owd_id = dim.owd_id\r\nwhere lang = 'ru'\r\nand create_dttm BETWEEN parseDateTime64BestEffortOrZero('${__from:date}') AND parseDateTime64BestEffortOrZero('${__to:date}')\r\nand owd_name = 'OpenWeatherMap'\r\ngroup by city\r\norder by value",
+          "rawSql": "SELECT city, floor(avg(humidity),2) as value from main.dm_weather_data_distributed dm\r\njoin allrp.ds_dim_owd dim on dm.owd_id = dim.owd_id\r\nwhere lang = 'ru'\r\nand owd_name = 'OpenWeatherMap'\r\nand create_dttm BETWEEN parseDateTime64BestEffortOrZero('${__from:date}') AND parseDateTime64BestEffortOrZero('${__to:date}')\r\ngroup by city\r\norder by value",
           "refId": "A"
         }
       ],
-      "title": "Средняя температура (°C) по источнику OpenWeatherMap",
+      "title": "Средняя влажность (%) по источнику OpenWeatherMap",
       "type": "bargauge"
     },
     {
@@ -407,11 +407,11 @@
           },
           "pluginVersion": "4.0.6",
           "queryType": "table",
-          "rawSql": "SELECT city, floor(avg(temp),2) as value from main.dm_weather_data_distributed dm\r\njoin allrp.ds_dim_owd dim on dm.owd_id = dim.owd_id\r\nwhere lang = 'ru'\r\nand owd_name = 'WeatherApi'\r\nand create_dttm BETWEEN parseDateTime64BestEffortOrZero('${__from:date}') AND parseDateTime64BestEffortOrZero('${__to:date}')\r\ngroup by city\r\norder by value",
+          "rawSql": "SELECT city, floor(avg(humidity),2) as value from main.dm_weather_data_distributed dm\r\njoin allrp.ds_dim_owd dim on dm.owd_id = dim.owd_id\r\nwhere lang = 'ru'\r\nand owd_name = 'WeatherApi'\r\nand create_dttm BETWEEN parseDateTime64BestEffortOrZero('${__from:date}') AND parseDateTime64BestEffortOrZero('${__to:date}')\r\ngroup by city\r\norder by value",
           "refId": "A"
         }
       ],
-      "title": "Средняя температура (°C) по источнику WeatherApi",
+      "title": "Средняя влажность (%) по источнику WeatherApi",
       "type": "bargauge"
     },
     {
@@ -486,11 +486,11 @@
           },
           "pluginVersion": "4.0.6",
           "queryType": "table",
-          "rawSql": "SELECT city, floor(max(temp),2) as value from main.dm_weather_data_distributed dm\r\njoin allrp.ds_dim_owd dim on dm.owd_id = dim.owd_id\r\nwhere lang = 'ru'\r\nand owd_name = 'OpenWeatherMap'\r\nand create_dttm BETWEEN parseDateTime64BestEffortOrZero('${__from:date}') AND parseDateTime64BestEffortOrZero('${__to:date}')\r\ngroup by city\r\norder by value",
+          "rawSql": "SELECT city, floor(max(humidity),2) as value from main.dm_weather_data_distributed dm\r\njoin allrp.ds_dim_owd dim on dm.owd_id = dim.owd_id\r\nwhere lang = 'ru'\r\nand owd_name = 'OpenWeatherMap'\r\nand create_dttm BETWEEN parseDateTime64BestEffortOrZero('${__from:date}') AND parseDateTime64BestEffortOrZero('${__to:date}')\r\ngroup by city\r\norder by value",
           "refId": "A"
         }
       ],
-      "title": "Максимальная температура (°C) по источнику OpenWeatherMap",
+      "title": "Максимальная влажность(%) по источнику OpenWeatherMap",
       "type": "bargauge"
     },
     {
@@ -565,11 +565,11 @@
           },
           "pluginVersion": "4.0.6",
           "queryType": "table",
-          "rawSql": "SELECT city, floor(max(temp),2) as value from main.dm_weather_data_distributed dm\r\njoin allrp.ds_dim_owd dim on dm.owd_id = dim.owd_id\r\nwhere lang = 'ru'\r\nand owd_name = 'WeatherApi'\r\nand create_dttm BETWEEN parseDateTime64BestEffortOrZero('${__from:date}') AND parseDateTime64BestEffortOrZero('${__to:date}')\r\ngroup by city\r\norder by value",
+          "rawSql": "SELECT city, floor(max(humidity),2) as value from main.dm_weather_data_distributed dm\r\njoin allrp.ds_dim_owd dim on dm.owd_id = dim.owd_id\r\nwhere lang = 'ru'\r\nand owd_name = 'WeatherApi'\r\nand create_dttm BETWEEN parseDateTime64BestEffortOrZero('${__from:date}') AND parseDateTime64BestEffortOrZero('${__to:date}')\r\ngroup by city\r\norder by value",
           "refId": "A"
         }
       ],
-      "title": "Максимальная температура (°C) по источнику WeatherApi",
+      "title": "Максимальная влажность (%) по источнику WeatherApi",
       "type": "bargauge"
     },
     {
@@ -644,11 +644,11 @@
           },
           "pluginVersion": "4.0.6",
           "queryType": "table",
-          "rawSql": "SELECT city, floor(min(temp),2) as value from main.dm_weather_data_distributed dm\r\njoin allrp.ds_dim_owd dim on dm.owd_id = dim.owd_id\r\nwhere lang = 'ru'\r\nand owd_name = 'OpenWeatherMap'\r\nand create_dttm BETWEEN parseDateTime64BestEffortOrZero('${__from:date}') AND parseDateTime64BestEffortOrZero('${__to:date}')\r\ngroup by city\r\norder by value",
+          "rawSql": "SELECT city, floor(min(humidity),2) as value from main.dm_weather_data_distributed dm\r\njoin allrp.ds_dim_owd dim on dm.owd_id = dim.owd_id\r\nwhere lang = 'ru'\r\nand owd_name = 'OpenWeatherMap'\r\nand create_dttm BETWEEN parseDateTime64BestEffortOrZero('${__from:date}') AND parseDateTime64BestEffortOrZero('${__to:date}')\r\ngroup by city\r\norder by value",
           "refId": "A"
         }
       ],
-      "title": "Минимальная температура (°C) по источнику OpenWeatherMap",
+      "title": "Минимальная влажность (%) по источнику OpenWeatherMap",
       "type": "bargauge"
     },
     {
@@ -723,11 +723,11 @@
           },
           "pluginVersion": "4.0.6",
           "queryType": "table",
-          "rawSql": "SELECT city, floor(min(temp),2) as value from main.dm_weather_data_distributed dm\r\njoin allrp.ds_dim_owd dim on dm.owd_id = dim.owd_id\r\nwhere lang = 'ru'\r\nand owd_name = 'WeatherApi'\r\nand create_dttm BETWEEN parseDateTime64BestEffortOrZero('${__from:date}') AND parseDateTime64BestEffortOrZero('${__to:date}')\r\ngroup by city\r\norder by value",
+          "rawSql": "SELECT city, floor(min(humidity),2) as value from main.dm_weather_data_distributed dm\r\njoin allrp.ds_dim_owd dim on dm.owd_id = dim.owd_id\r\nwhere lang = 'ru'\r\nand owd_name = 'WeatherApi'\r\nand create_dttm BETWEEN parseDateTime64BestEffortOrZero('${__from:date}') AND parseDateTime64BestEffortOrZero('${__to:date}')\r\ngroup by city\r\norder by value",
           "refId": "A"
         }
       ],
-      "title": "Минимальная температура (°C) по источнику WeatherApi",
+      "title": "Минимальная влажность (%) по источнику WeatherApi",
       "type": "bargauge"
     }
   ],
@@ -742,8 +742,8 @@
   },
   "timepicker": {},
   "timezone": "browser",
-  "title": "Температура по городам",
-  "uid": "fdkprnupq1la8e",
-  "version": 28,
+  "title": "Влажность по городам",
+  "uid": "adkvgftx9mxhcd",
+  "version": 17,
   "weekStart": ""
 }
