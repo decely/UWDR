@@ -1,6 +1,5 @@
 import logging
 from typing import List
-from googletrans import Translator
 
 from airflow.models import Variable
 
@@ -8,12 +7,10 @@ from plugins.uwdr_hook import ch_run_query_empty, ch_run_query
 
 logger = logging.getLogger('airflow.task')
 
-translator = Translator()
-
 langs = Variable.get(key='langs_list', deserialize_json=True)["langs"]
 
 
-def need_to_translate_weather_data():
+def need_to_translate_weather_data() -> str:
     """Проверка на необходимость переводить погодные данные"""
 
     load = 'finish'
@@ -40,11 +37,11 @@ def need_to_translate_weather_data():
         )
 
         if len(result) != 0:
-            logger.info("Необходима загрузка новых погодных данных")
+            logger.info("Необходим перевод новых погодных данных")
             langs_needed.append(lang)
             load = 'load_needed'
         else:
-            logger.info("Погодные данные актуальны, нет надобности в загрузке")
+            logger.info("Погодные данные актуальны, нет надобности в переводе")
             load = 'finish'
 
     return load
@@ -62,85 +59,12 @@ def truncate_buffer_table() -> None:
     )
 
 
-def translate_ds_weather_data() -> List:
-    """Перевод погодных данных DS слоя и подготовка к загрузке в буферную таблицу"""
-
-    insert_sql = []
-
-    for lang in langs:
-
-        logger.info(f"Получение непереведенных погодных данных по языку {lang} из DS слоя...")
-
-        sql = """
-        SELECT
-            id,
-            owd_id,
-            '{lang}',
-            city,
-            wind_direction,
-            general_condition,
-        FROM allrp.ds_dim_weather_data as ods
-        where (id, owd_id, '{lang}') not in(
-            select id, owd_id, lang from allrp.ds_dim_translated_weather_data
-        )
-        """.format(
-            lang=lang
-        )
-
-        sql_result = ch_run_query(
-            sql=sql,
-        )
-
-        logger.info(f"Перевод погодных данных по языку {lang}...")
-
-        row = len(sql_result)
-        column = len(sql_result[0])
-        translate_result = []
-
-        for x in range(0, row):
-            translate_result.append([])
-            for y in range(0, column):
-                if y <= 1:
-                    translate_result[x].append(str(sql_result[x][y]))
-                elif sql_result[x][y] == 'Clear' and lang == 'ru':
-                    translate_result[x].append('Ясно')
-                elif sql_result[x][y] == 'North-East' and lang == 'ru':
-                    translate_result[x].append('Северо-Восток')
-                elif y > 2:
-                    translate = translator.translate(sql_result[x][y], src='en', dest=lang)
-                    translate_result[x].append(translate.text)
-                else:
-                    translate_result[x].append(sql_result[x][y])
-
-        logger.info(f"Формирование запроса записи переведенных погодных данных по языку {lang} в буферную таблицу...")
-
-        values_sql = ''
-
-        for x in range(0, row):
-            if x == 0:
-                values_sql = "\n\t("
-            else:
-                values_sql = values_sql + ",("
-            for y in range(0, column):
-                if y == 0:
-                    values_sql = values_sql + f"'{translate_result[x][y]}'"
-                else:
-                    values_sql = values_sql + f", '{translate_result[x][y]}'"
-            values_sql = values_sql + ")\n\t"
-
-        insert_sql.append(values_sql)
-
-    return insert_sql
-
-
-def load_weather_data_to_buffer(**context) -> None:
+def load_weather_data_to_buffer() -> None:
     """Запись переведенных погодных данных в буферную таблицу"""
-
-    insert_sql = context['ti'].xcom_pull(task_ids='translate_ds_weather_data')
 
     logger.info("Запись переведенных погодных данных в буферную таблицу...")
 
-    for values_sql in insert_sql:
+    for lang in langs:
         sql = """
         INSERT INTO allrp.ds_buffer_translated_weather_data(
             id,
@@ -150,7 +74,19 @@ def load_weather_data_to_buffer(**context) -> None:
             wind_direction,
             general_condition
         )
-        VALUES""" + values_sql
+        SELECT
+            id,
+            owd_id,
+            '{lang}',
+            dictGetOrNull('allrp.dic_ds_dim_ord', '{lang}', city) AS city,
+            dictGetOrNull('allrp.dic_ds_dim_ord', '{lang}', wind_direction) AS wind_direction,
+            dictGetOrNull('allrp.dic_ds_dim_ord', '{lang}', general_condition) AS general_condition
+        FROM allrp.ds_dim_weather_data as ods
+        where (id, owd_id, '{lang}') not in(
+            select id, owd_id, lang from allrp.ds_dim_translated_weather_data
+        )""".format(
+            lang = lang
+        )
 
         ch_run_query_empty(
             sql=sql,
