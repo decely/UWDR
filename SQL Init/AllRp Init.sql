@@ -80,3 +80,28 @@ CREATE TABLE IF NOT EXISTS allrp.ds_dim_translated_weather_data on cluster 'all-
 engine = ReplicatedMergeTree('/clickhouse/tables/all-replicated/ds_dim_translated_weather_data_v2', '{replica}')
 ORDER BY (id, ds_id, owd_id)
 TTL translate_dttm + INTERVAL 6 MONTH;
+
+
+--Таблица перевода погодных данных
+CREATE TABLE IF NOT EXISTS allrp.ds_dim_trans on cluster 'all-replicated'(
+    origin String,
+    ru String,
+    fr String
+)
+engine = ReplicatedMergeTree('/clickhouse/tables/all-replicated/ds_dim_trans', '{replica}')
+ORDER BY (origin)
+
+
+--Словари
+
+--Словарь перевода погодных данных
+CREATE DICTIONARY if not exists allrp.dic_ds_dim_ord ON CLUSTER 'all-replicated'
+(
+    origin String,
+    ru String,
+    fr String
+)
+PRIMARY KEY origin
+SOURCE (CLICKHOUSE(db 'allrp' TABLE 'ds_dim_trans'))
+LIFETIME(MIN 3500 MAX 3600)
+LAYOUT(COMPLEX_KEY_SPARSE_HASHED(PREALLOCATE 1));

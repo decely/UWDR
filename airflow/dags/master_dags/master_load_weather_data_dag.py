@@ -42,7 +42,15 @@ with DAG(**dag_params) as dag:  # type: ignore
 
     trigger_load_ds_weather_translated_data_dag = TriggerDagRunOperator(
         task_id='trigger_load_ds_weather_translated_data_dag',
-        trigger_dag_id='load_ds_weather_translated_data_dag',
+        trigger_dag_id='load_ds_weather_translate_data_dag',
+        wait_for_completion=True,
+        poke_interval=10,
+        trigger_rule='all_done',
+    )
+
+    trigger_load_ds_translation_table_data_dag = TriggerDagRunOperator(
+        task_id='trigger_load_ds_translation_table_data_dag',
+        trigger_dag_id='load_ds_translation_table_data_dag',
         wait_for_completion=True,
         poke_interval=10,
         trigger_rule='all_done',
@@ -61,6 +69,7 @@ with DAG(**dag_params) as dag:  # type: ignore
     start >> \
         trigger_load_ods_raw_weather_data_dag >> \
         trigger_load_ds_weather_data_dag >> \
+        trigger_load_ds_translation_table_data_dag >> \
         trigger_load_ds_weather_translated_data_dag >> \
         trigger_load_dm_weather_data_dag >> \
         finish
