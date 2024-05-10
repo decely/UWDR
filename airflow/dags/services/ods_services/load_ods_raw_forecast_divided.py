@@ -43,11 +43,10 @@ def prepare_load_raw_divided_data(owd_mapping) -> str:
     for owd in owd_mapping:
 
         if not first_owd:
-            pre_sql = pre_sql + '\n\tUNION ALL\n\t'
-            first_owd = False
+            pre_sql = pre_sql + 'UNION ALL'
+        first_owd = False
 
-        pre_sql = pre_sql + """
-        SELECT
+        pre_sql = pre_sql + """ SELECT
             id,
             owd_id,
             JSONExtractString(json_string, {owd[1]}) AS city,
@@ -55,9 +54,8 @@ def prepare_load_raw_divided_data(owd_mapping) -> str:
             create_dttm
         FROM allsh.ods_raw_forecast_data_distributed ods
         join allrp.ds_dim_owd dim on ods.owd_id = dim.owd_id
-        where owd_name = {owd[0]}
-        ORDER BY id
-        """.format(
+        where owd_name = '{owd[0]}'
+        ORDER BY id """.format(
             owd=owd
         )
 
@@ -92,7 +90,7 @@ def load_raw_divided_forecast_data(**context) -> None:
     )
     WHERE JSONExtractString(json_string, 'error') = ''
     AND JSONExtractString(json_string, 'cod') in('200','')
-    AND (id, owd_id) not in(select id, owd_id from allsh.ods_raw_divided_forecast_data_distributed)
+    AND (id, divide_id, owd_id) not in(select id, divide_id, owd_id from allsh.ods_raw_divided_forecast_data_distributed)
     SETTINGS distributed_product_mode = 'allow'
     """.format(
         pre_sql=pre_sql

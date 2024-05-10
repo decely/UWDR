@@ -26,7 +26,7 @@ def need_to_translate_forecast_data() -> str:
             owd_id,
         FROM allrp.ds_dim_forecast_data as ods
         where (id, divide_id, owd_id, '{lang}') not in(
-            select id, owd_id, lang from allrp.ds_dim_translated_forecast_data
+            select id, divide_id, owd_id, lang from allrp.ds_dim_translated_forecast_data
         )
         """.format(
             lang=lang
@@ -113,7 +113,7 @@ def load_from_buffer_to_ds() -> None:
         humidity,
         cloud_level,
         general_condition,
-        forecast_ddtm,
+        forecast_dttm,
         create_dttm,
         upload_dttm,
         translate_dttm,
@@ -132,12 +132,13 @@ def load_from_buffer_to_ds() -> None:
         dim.humidity,
         dim.cloud_level,
         buff.general_condition,
+        dim.forecast_dttm,
         dim.create_dttm,
         dim.upload_dttm,
         now() AS translate_dttm,
         buff.lang
     FROM allrp.ds_buffer_translated_forecast_data buff
-    INNER JOIN allrp.ds_dim_forecast_data dim ON (dim.id, dim.owd_id) = (buff.id, buff.owd_id)
+    INNER JOIN allrp.ds_dim_forecast_data dim ON (dim.id, dim.divide_id, dim.owd_id) = (buff.id, buff.divide_id, buff.owd_id)
     """
 
     ch_run_query_empty(

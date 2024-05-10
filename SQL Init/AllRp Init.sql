@@ -97,7 +97,7 @@ CREATE TABLE IF NOT EXISTS allrp.ds_dim_forecast_data on cluster 'all-replicated
 	humidity Nullable(Int),
 	cloud_level Nullable(Int),
 	general_condition String,
-	forecast_ddtm DateTime,
+	forecast_dttm DateTime,
 	create_dttm DateTime,
 	upload_dttm DateTime
 )
@@ -136,7 +136,7 @@ CREATE TABLE IF NOT EXISTS allrp.ds_dim_translated_forecast_data on cluster 'all
 	humidity Nullable(Int),
 	cloud_level Nullable(Int),
 	general_condition String,
-	forecast_ddtm DateTime,
+	forecast_dttm DateTime,
 	create_dttm DateTime,
 	upload_dttm DateTime,
 	translate_dttm DateTime,
