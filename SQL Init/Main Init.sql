@@ -79,7 +79,7 @@ CREATE TABLE IF NOT EXISTS main.stg_dm_forecast_actual_data on cluster 'main'
 	lang String
 )
 engine = ReplicatedReplacingMergeTree('/clickhouse/tabkes/{shard}/stg_dm_forecast_actual_data_v2', '{replica}', create_dttm)
-ORDER BY (owd_id, forecast_ddtm);
+ORDER BY (owd_id, lang, forecast_ddtm);
 --Дистр таблица
 CREATE TABLE IF NOT EXISTS  main.stg_dm_forecast_actual_data_distributed ON cluster 'main'
 AS main.stg_dm_forecast_actual_data
@@ -108,7 +108,7 @@ CREATE TABLE IF NOT EXISTS main.dm_forecast_actual_data on cluster 'main'
 	lang String
 )
 engine = ReplicatedReplacingMergeTree('/clickhouse/tabkes/{shard}/stg_dm_forecast_actual_data_v2', '{replica}', create_dttm)
-ORDER BY (owd_id, forecast_ddtm);
+ORDER BY (owd_id, lang, forecast_ddtm);
 --Дистр таблица
 CREATE TABLE IF NOT EXISTS main.dm_forecast_actual_data_distributed ON cluster 'main'
 AS main.dm_forecast_actual_data

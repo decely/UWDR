@@ -1,17 +1,86 @@
 {
-"cities_list":
-{
+  "cities_list":
+  {
   "cities":[
     "Voronezh",
     "Moscow",
     "Novorossiysk"
   ]
-},
-"langs_list":
+  },
+  "langs_list":
   {
     "langs":[
       "ru",
       "fr"
+    ]
+  },
+  "owd_url_list":
+  {
+    "OpenWeatherMap": "http://api.openweathermap.org/data/2.5/weather?units=metric&appid=",
+    "WeatherApi": "http://api.weatherapi.com/v1/current.json?aqi=no&key="
+  },
+  "owd_json_mapping":
+  {
+    "weather_mapping":
+    [
+      [
+        "OpenWeatherMap",
+        "'name'",
+        "'main', 'temp'",
+        "'wind', 'speed'",
+        "'wind', 'deg'",
+        "'main', 'pressure'",
+        "'main', 'humidity'",
+        "'clouds', 'all'",
+        "'weather')[1], 'main'"
+      ],
+      [
+        "WeatherApi",
+        "'location', 'name'",
+        "'current', 'temp_c'",
+        "'current', 'wind_kph'",
+        "'current', 'wind_degree'",
+        "'current', 'pressure_mb'",
+        "'current', 'humidity'",
+        "'current', 'cloud'",
+        "'current', 'condition', 'text'"
+      ]
+    ],
+    "forecast_extraction":
+    [
+      [
+        "OpenWeatherMap",
+        "'city', 'name'",
+        "json_string, 'list'"
+      ],
+      [
+        "WeatherApi",
+        "'location', 'name'",
+        "arrayJoin(JSONExtractArrayRaw(json_string,'forecast','forecastday')),'hour'"
+      ]
+    ],
+    "forecast_mapping":
+    [
+      [
+        "OpenWeatherMap",
+        "'main', 'temp'",
+        "'wind', 'speed'",
+        "'wind', 'deg'",
+        "'main', 'pressure'",
+        "'main', 'humidity'",
+        "'clouds', 'all'",
+        "'weather')[1], 'main'"
+      ],
+      [
+        "WeatherApi",
+        "'current', 'temp_c'",
+        "'current', 'wind_kph'",
+        "'current', 'wind_degree'",
+        "'current', 'pressure_mb'",
+        "'current', 'humidity'",
+        "'current', 'cloud'",
+        "'current', 'condition', 'text'"
+      ]
     ]
   }
 }

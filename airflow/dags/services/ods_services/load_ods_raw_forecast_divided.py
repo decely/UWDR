@@ -33,8 +33,42 @@ def need_to_divide_forecast_data() -> str:
         return 'finish'
 
 
-def load_raw_divided_forecast_data() -> None:
+def prepare_load_raw_divided_data(owd_mapping) -> str:
+    """Подготовка подзапроса для разделения данных"""
+
+    first_owd = True
+
+    pre_sql = ''
+
+    for owd in owd_mapping:
+
+        if not first_owd:
+            pre_sql = pre_sql + '\n\tUNION ALL\n\t'
+            first_num = False
+
+        pre_sql = pre_sql + """
+        SELECT
+            id,
+            owd_id,
+            JSONExtractString(json_string, {owd[1]}) AS city,
+            arrayJoin(JSONExtractArrayRaw({owd[2]})) AS json,
+            create_dttm
+        FROM allsh.ods_raw_forecast_data_distributed ods
+        join allrp.ds_dim_owd dim on ods.owd_id = dim.owd_id
+        where owd_name = {owd[0]}
+        ORDER BY id
+        """.format(
+            owd = owd
+        )
+
+    return pre_sql
+
+
+
+def load_raw_divided_forecast_data(**context) -> None:
     """Разделение данных прогноза в ODS слое"""
+
+    pre_sql = context['ti'].xcom_pull(task_ids='prepare_load_raw_divided_data')
 
     sql = """
     INSERT INTO allsh.ods_raw_divided_forecast_data_distributed(
@@ -55,33 +89,15 @@ def load_raw_divided_forecast_data() -> None:
         create_dttm,
         now() AS divide_dttm
     from(
-        SELECT
-            id,
-            owd_id,
-            JSONExtractString(json_string, 'city', 'name') AS city,
-            arrayJoin(JSONExtractArrayRaw(json_string, 'list')) AS json,
-            create_dttm
-        FROM allsh.ods_raw_forecast_data_distributed ods
-        join allrp.ds_dim_owd dim on ods.owd_id = dim.owd_id
-        where owd_name = 'OpenWeatherMap'
-        ORDER BY id
-        UNION ALL
-        SELECT
-        id,
-        owd_id,
-        JSONExtractString(json_string, 'location', 'name') AS city,
-        arrayJoin(JSONExtractArrayRaw(arrayJoin(JSONExtractArrayRaw(json_string,'forecast','forecastday')),'hour')) AS json,
-        create_dttm
-        FROM allsh.ods_raw_forecast_data_distributed ods
-        join allrp.ds_dim_owd dim on ods.owd_id = dim.owd_id
-        where owd_name = 'WeatherApi'
-        ORDER BY id
+        {pre_sql}
     )
     WHERE JSONExtractString(json_string, 'error') = ''
     AND JSONExtractString(json_string, 'cod') in('200','')
     AND (id, owd_id) not in(select id, owd_id from allsh.ods_raw_divided_forecast_data_distributed)
     SETTINGS distributed_product_mode = 'allow'
-    """
+    """.format(
+        pre_sql = pre_sql
+    )
 
     ch_run_query_empty(
         sql=sql,

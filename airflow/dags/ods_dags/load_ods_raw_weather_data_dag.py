@@ -8,6 +8,7 @@ from airflow.operators.python import PythonOperator
 from services.ods_services.load_ods_raw_weather import get_owd_api_and_id, load_raw_weather_data_by_api
 
 cities_list = Variable.get(key='cities_list', deserialize_json=True)["cities"]
+owd_url_list = Variable.get(key='owd_url_list', deserialize_json=True)
 
 dag_params = {
     'dag_id': 'load_ods_raw_weather_data_dag',
@@ -34,7 +35,8 @@ with DAG(**dag_params) as dag:  # type: ignore
         python_callable=load_raw_weather_data_by_api,
         op_kwargs={
             'cities_list': cities_list,
-        }
+            'api_url_list': owd_url_list,
+        },
     )
 
     finish = EmptyOperator(task_id='finish')
