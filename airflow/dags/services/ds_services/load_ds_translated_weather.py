@@ -1,5 +1,4 @@
 import logging
-from typing import List
 
 from airflow.models import Variable
 
@@ -85,7 +84,7 @@ def load_weather_data_to_buffer() -> None:
         where (id, owd_id, '{lang}') not in(
             select id, owd_id, lang from allrp.ds_dim_translated_weather_data
         )""".format(
-            lang = lang
+            lang=lang
         )
 
         ch_run_query_empty(

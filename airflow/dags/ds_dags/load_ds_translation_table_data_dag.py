@@ -9,6 +9,7 @@ from services.ds_services.load_ds_translation_table import (
     update_translate_libraries_if_needed,
     prepare_load_translate_table,
     load_translation_to_weather,
+    reload_translation_dict,
 )
 
 dag_params = {
@@ -48,6 +49,11 @@ with DAG(**dag_params) as dag:  # type: ignore
         python_callable=load_translation_to_weather,
     )
 
+    reload_translation_dict = PythonOperator(
+        task_id='reload_translation_dict',
+        python_callable=reload_translation_dict,
+    )
+
     finish = EmptyOperator(task_id='finish', trigger_rule='none_failed_min_one_success')
 
     start >> \
@@ -59,4 +65,5 @@ with DAG(**dag_params) as dag:  # type: ignore
         update_translate_libraries_if_needed >> \
         prepare_load_translate_table >> \
         load_translation_to_weather >> \
+        reload_translation_dict >> \
         finish
