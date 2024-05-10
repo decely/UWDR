@@ -10,23 +10,24 @@ logger = logging.getLogger('airflow.task')
 langs = Variable.get(key='langs_list', deserialize_json=True)["langs"]
 
 
-def need_to_translate_weather_data() -> str:
-    """Проверка на необходимость переводить погодные данные"""
+def need_to_translate_forecast_data() -> str:
+    """Проверка на необходимость переводить данные прогноза"""
 
     load = 'finish'
     langs_needed = []
 
     for lang in langs:
 
-        logger.info(f"Проверка переведенных погодных данных по языку {lang}...")
+        logger.info(f"Проверка переведенных данных прогноза по языку {lang}...")
 
         sql = """
         SELECT
             id,
+            divide_id,
             owd_id,
-        FROM allrp.ds_dim_weather_data as ods
-        where (id, owd_id, '{lang}') not in(
-            select id, owd_id, lang from allrp.ds_dim_translated_weather_data
+        FROM allrp.ds_dim_forecast_data as ods
+        where (id, divide_id, owd_id, '{lang}') not in(
+            select id, owd_id, lang from allrp.ds_dim_translated_forecast_data
         )
         """.format(
             lang=lang
@@ -37,11 +38,11 @@ def need_to_translate_weather_data() -> str:
         )
 
         if len(result) != 0:
-            logger.info("Необходим перевод новых погодных данных")
+            logger.info("Необходим перевод новых данных прогноза")
             langs_needed.append(lang)
             load = 'load_needed'
         else:
-            logger.info("Погодные данные актуальны, нет надобности в переводе")
+            logger.info("Данные прогноза актуальны, нет надобности в переводе")
             load = 'finish'
 
     return load
@@ -51,7 +52,7 @@ def truncate_buffer_table() -> None:
     """Очистка буферной таблицы для записи переведенных данных"""
 
     sql = """
-    truncate table if exists allrp.ds_buffer_translated_weather_data on cluster 'all-replicated' sync;
+    truncate table if exists allrp.ds_buffer_translated_forecast_data on cluster 'all-replicated' sync;
     """
 
     ch_run_query_empty(
@@ -59,15 +60,16 @@ def truncate_buffer_table() -> None:
     )
 
 
-def load_weather_data_to_buffer() -> None:
-    """Запись переведенных погодных данных в буферную таблицу"""
+def load_forecast_data_to_buffer() -> None:
+    """Запись переведенных данных прогноза в буферную таблицу"""
 
-    logger.info("Запись переведенных погодных данных в буферную таблицу...")
+    logger.info("Запись переведенных данных прогноза в буферную таблицу...")
 
     for lang in langs:
         sql = """
-        INSERT INTO allrp.ds_buffer_translated_weather_data(
+        INSERT INTO allrp.ds_buffer_translated_forecast_data(
             id,
+            divide_id,
             owd_id,
             lang,
             city,
@@ -76,14 +78,15 @@ def load_weather_data_to_buffer() -> None:
         )
         SELECT
             id,
+            divide_id,
             owd_id,
             '{lang}',
             dictGetOrNull('allrp.dic_ds_dim_trans', '{lang}', city) AS city,
             dictGetOrNull('allrp.dic_ds_dim_trans', '{lang}', wind_direction) AS wind_direction,
             dictGetOrNull('allrp.dic_ds_dim_trans', '{lang}', general_condition) AS general_condition
-        FROM allrp.ds_dim_weather_data as ods
-        where (id, owd_id, '{lang}') not in(
-            select id, owd_id, lang from allrp.ds_dim_translated_weather_data
+        FROM allrp.ds_dim_forecast_data as ods
+        where (id, divide_id, owd_id, '{lang}') not in(
+            select id, divide_id, owd_id, lang from allrp.ds_dim_translated_forecast_data
         )""".format(
             lang = lang
         )
@@ -95,11 +98,12 @@ def load_weather_data_to_buffer() -> None:
 
 def load_from_buffer_to_ds() -> None:
 
-    logger.info("Запись переведенных погодных данных в основную таблицу...")
+    logger.info("Запись переведенных данных прогноза в основную таблицу...")
 
     sql = """
-    INSERT INTO allrp.ds_dim_translated_weather_data(
+    INSERT INTO allrp.ds_dim_translated_forecast_data(
         id,
+        divide_id,
         ds_id,
         owd_id,
         city,
@@ -117,6 +121,7 @@ def load_from_buffer_to_ds() -> None:
     )
     SELECT
         dim.id,
+        dim.divide_id,
         generateUUIDv4() as ds_id,
         dim.owd_id,
         buff.city,
@@ -131,8 +136,8 @@ def load_from_buffer_to_ds() -> None:
         dim.upload_dttm,
         now() AS translate_dttm,
         buff.lang
-    FROM allrp.ds_buffer_translated_weather_data buff
-    INNER JOIN allrp.ds_dim_weather_data dim ON (dim.id, dim.owd_id) = (buff.id, buff.owd_id)
+    FROM allrp.ds_buffer_translated_forecast_data buff
+    INNER JOIN allrp.ds_dim_forecast_data dim ON (dim.id, dim.owd_id) = (buff.id, buff.owd_id)
     """
 
     ch_run_query_empty(
