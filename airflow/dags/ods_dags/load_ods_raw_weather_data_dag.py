@@ -35,7 +35,7 @@ with DAG(**dag_params) as dag:  # type: ignore
         python_callable=load_raw_weather_data_by_api,
         op_kwargs={
             'cities_list': cities_list,
-            'api_url_list': owd_url_list,
+            'api_url_list': owd_url_list['WeatherData'],
         },
     )
 

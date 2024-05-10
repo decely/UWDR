@@ -34,7 +34,7 @@ with DAG(**dag_params) as dag:  # type: ignore
 
     trigger_load_ods_raw_forecast_data_divided_dag = TriggerDagRunOperator(
         task_id='trigger_load_ods_forecast_data_divided_dag',
-        trigger_dag_id='load_ods_forecast_data_divided_dag',
+        trigger_dag_id='load_ods_raw_forecast_data_divided_dag',
         wait_for_completion=True,
         poke_interval=10,
         trigger_rule='all_done',

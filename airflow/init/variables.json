@@ -16,8 +16,16 @@
   },
   "owd_url_list":
   {
-    "OpenWeatherMap": "http://api.openweathermap.org/data/2.5/weather?units=metric&appid=",
-    "WeatherApi": "http://api.weatherapi.com/v1/current.json?aqi=no&key="
+    "WeatherData":
+    {
+      "OpenWeatherMap": "http://api.openweathermap.org/data/2.5/weather?units=metric&appid=",
+      "WeatherApi": "http://api.weatherapi.com/v1/current.json?aqi=no&key="
+    },
+    "ForecastData":
+    {
+      "OpenWeatherMap": "http://api.openweathermap.org/data/2.5/forecast?units=metric&appid=",
+      "WeatherApi": "http://api.weatherapi.com/v1/forecast.json?aqi=no&days=3&key="
+    }
   },
   "owd_json_mapping":
   {
@@ -32,7 +40,7 @@
         "'main', 'pressure'",
         "'main', 'humidity'",
         "'clouds', 'all'",
-        "'weather')[1], 'main'"
+        "JSONExtractArrayRaw(json_string, 'weather')[1], 'main'"
       ],
       [
         "WeatherApi",
@@ -43,7 +51,7 @@
         "'current', 'pressure_mb'",
         "'current', 'humidity'",
         "'current', 'cloud'",
-        "'current', 'condition', 'text'"
+        "json_string,'current', 'condition', 'text'"
       ]
     ],
     "forecast_extraction":
@@ -69,17 +77,19 @@
         "'main', 'pressure'",
         "'main', 'humidity'",
         "'clouds', 'all'",
-        "'weather')[1], 'main'"
+        "JSONExtractArrayRaw(json_string, 'weather')[1], 'main'",
+        "'dt_txt'"
       ],
       [
         "WeatherApi",
-        "'current', 'temp_c'",
-        "'current', 'wind_kph'",
-        "'current', 'wind_degree'",
-        "'current', 'pressure_mb'",
-        "'current', 'humidity'",
-        "'current', 'cloud'",
-        "'current', 'condition', 'text'"
+        "'temp_c'",
+        "'wind_kph'",
+        "'wind_degree'",
+        "'pressure_mb'",
+        "'humidity'",
+        "'cloud'",
+        "json_string, 'condition', 'text'",
+        "'time'"
       ]
     ]
   }

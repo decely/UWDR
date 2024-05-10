@@ -73,11 +73,8 @@ def load_weather_data_from_ods_to_ds(owd_mapping) -> None:
             ) as wind_direction,
             JSONExtractInt(json_string, {owd[5]}) as atmospheric_pressure,
             JSONExtractInt(json_string, {owd[6]}) as humidity,
-            JSONExtractInt(json_string,'{owd[7]}) as cloud_level,
-            if(
-                owd_name = 'OpenWeatherMap', JSONExtractString(JSONExtractArrayRaw(json_string, {owd[8]}),
-                JSONExtractString(json_string, {owd[8]})
-            ) as general_condition,
+            JSONExtractInt(json_string, {owd[7]}) as cloud_level,
+            JSONExtractString({owd[8]})  as general_condition,
             create_dttm,
             now() as upload_dttm
         FROM allsh.ods_raw_weather_data_distributed as ods
@@ -85,10 +82,12 @@ def load_weather_data_from_ods_to_ds(owd_mapping) -> None:
         prewhere (id, owd_id) not in(
             select id, owd_id from allrp.ds_dim_weather_data
         )
-        AND owd_name = '{owd[0]}'
         WHERE JSONExtractString(json_string, 'error') = ''
         AND JSONExtractString(json_string, 'cod') in('200','')
-        """
+        AND owd_name = '{owd[0]}'
+        """.format(
+            owd=owd
+        )
 
         ch_run_query_empty(
             sql=sql,

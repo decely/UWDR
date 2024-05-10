@@ -27,6 +27,18 @@ def need_to_update_translation_table() -> str:
     SELECT DISTINCT
         general_condition AS `origin`
     FROM allrp.ds_dim_weather_data
+    UNION ALL
+    SELECT DISTINCT
+        city AS `origin`
+    FROM allrp.ds_dim_forecast_data
+    UNION ALL
+    SELECT DISTINCT
+        wind_direction AS `origin`
+    FROM allrp.ds_dim_forecast_data
+    UNION ALL
+    SELECT DISTINCT
+        general_condition AS `origin`
+    FROM allrp.ds_dim_forecast_data
     )
     WHERE origin NOT IN (
         SELECT origin FROM allrp.ds_dim_trans
@@ -68,9 +80,15 @@ def prepare_load_translate_table() -> str:
     logger.info('Подготовка к заполнению таблицы с переводом по общему состоянию погоды...')
 
     sql = """
+    SELECT origin FROM (
     SELECT DISTINCT
-    general_condition AS `origin`
+        general_condition AS `origin`
     FROM allrp.ds_dim_weather_data
+    UNION ALL
+    SELECT DISTINCT
+        general_condition AS `origin`
+    FROM allrp.ds_dim_forecast_data
+    )
     WHERE origin NOT IN (
         SELECT origin FROM allrp.ds_dim_trans
     )
@@ -127,6 +145,14 @@ def prepare_load_translate_table() -> str:
     SELECT DISTINCT
         city AS `origin`
     FROM allrp.ds_dim_weather_data
+    UNION ALL
+    SELECT DISTINCT
+        city AS `origin`
+    FROM allrp.ds_dim_forecast_data
+    UNION ALL
+    SELECT DISTINCT
+        wind_direction AS `origin`
+    FROM allrp.ds_dim_forecast_data
     )
     WHERE origin NOT IN (
         SELECT origin FROM allrp.ds_dim_trans

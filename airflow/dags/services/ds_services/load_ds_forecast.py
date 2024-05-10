@@ -14,7 +14,7 @@ def need_to_load_forecast_data() -> str:
         divide_id,
         owd_id,
     FROM allsh.ods_raw_divided_forecast_data_distributed as ods
-    prewhere (id, owd_id) not in(
+    prewhere (id, divide_id, owd_id) not in(
         select id, divide_id, owd_id from allrp.ds_dim_forecast_data
     )
     WHERE JSONExtractString(json_string, 'error') = ''
@@ -52,7 +52,7 @@ def load_forecast_data_from_ods_to_ds(owd_mapping) -> None:
             humidity,
             cloud_level,
             general_condition,
-            forecast_ddtm,
+            forecast_dttm,
             create_dttm,
             upload_dttm
         )
@@ -77,21 +77,19 @@ def load_forecast_data_from_ods_to_ds(owd_mapping) -> None:
             ) as wind_direction,
             JSONExtractInt(json_string, {owd[4]}) as atmospheric_pressure,
             JSONExtractInt(json_string, {owd[5]}) as humidity,
-            JSONExtractInt(json_string,'{owd[6]}) as cloud_level,
-            if(
-                owd_name = 'OpenWeatherMap', JSONExtractString(JSONExtractArrayRaw(json_string, {owd[7]}),
-                JSONExtractString(json_string, {owd[7]})
-            ) as general_condition,
+            JSONExtractInt(json_string, {owd[6]}) as cloud_level,
+            JSONExtractString({owd[7]})  as general_condition,
+            parseDateTime64BestEffortOrZero(JSONExtractString(json_string, {owd[8]})) AS forecast_dttm,
             create_dttm,
             now() as upload_dttm
-        FROM allsh.ods_raw_forecast_data_distributed as ods
+        FROM allsh.ods_raw_divided_forecast_data_distributed as ods
         JOIN allrp.ds_dim_owd as dim on ods.owd_id = dim.owd_id
-        prewhere (id, owd_id) not in(
-            select id, owd_id from allrp.ds_dim_forecast_data
+        prewhere (id, divide_id, owd_id) not in(
+            select id, divide_id, owd_id from allrp.ds_dim_forecast_data
         )
-        AND owd_name = '{owd[0]}'
         WHERE JSONExtractString(json_string, 'error') = ''
         AND JSONExtractString(json_string, 'cod') in('200','')
+        AND owd_name = '{owd[0]}'
         """.format(
             owd=owd
         )

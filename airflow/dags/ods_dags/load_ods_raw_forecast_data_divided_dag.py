@@ -1,6 +1,7 @@
 from datetime import datetime
 
 from airflow import DAG
+from airflow.models import Variable
 from airflow.operators.empty import EmptyOperator
 from airflow.operators.python import PythonOperator, BranchPythonOperator
 
@@ -10,6 +11,7 @@ from services.ods_services.load_ods_raw_forecast_divided import (
     prepare_load_raw_divided_data,
 )
 
+owd_json_mapping = Variable.get(key='owd_json_mapping', deserialize_json=True)
 
 dag_params = {
     'dag_id': 'load_ods_raw_forecast_data_divided_dag',
@@ -36,6 +38,9 @@ with DAG(**dag_params) as dag:  # type: ignore
         task_id='prepare_load_raw_divided_data',
         python_callable=prepare_load_raw_divided_data,
         do_xcom_push=True,
+        op_kwargs={
+            'owd_mapping': owd_json_mapping["forecast_extraction"],
+        },
     )
 
     load_raw_divided_forecast_data = PythonOperator(
@@ -52,5 +57,6 @@ with DAG(**dag_params) as dag:  # type: ignore
     start >> \
         need_to_divide_forecast_data >> \
         load_needed >> \
+        prepare_load_raw_divided_data >> \
         load_raw_divided_forecast_data >> \
         finish

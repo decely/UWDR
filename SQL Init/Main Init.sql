@@ -72,14 +72,14 @@ CREATE TABLE IF NOT EXISTS main.stg_dm_forecast_actual_data on cluster 'main'
 	humidity Nullable(Int),
 	cloud_level Nullable(Int),
 	general_condition String,
-	forecast_ddtm DateTime,
+	forecast_dttm DateTime,
 	create_dttm DateTime,
 	upload_dttm DateTime,
 	translate_dttm Nullable(DateTime),
 	lang String
 )
 engine = ReplicatedReplacingMergeTree('/clickhouse/tables/{shard}/stg_dm_forecast_actual_data_v2', '{replica}', create_dttm)
-ORDER BY (owd_id, lang, forecast_ddtm);
+ORDER BY (owd_id, city, lang, forecast_dttm);
 --Дистр таблица
 CREATE TABLE IF NOT EXISTS  main.stg_dm_forecast_actual_data_distributed ON cluster 'main'
 AS main.stg_dm_forecast_actual_data
@@ -101,14 +101,14 @@ CREATE TABLE IF NOT EXISTS main.dm_forecast_actual_data on cluster 'main'
 	humidity Nullable(Int),
 	cloud_level Nullable(Int),
 	general_condition String,
-	forecast_ddtm DateTime,
+	forecast_dttm DateTime,
 	create_dttm DateTime,
 	upload_dttm DateTime,
 	translate_dttm Nullable(DateTime),
 	lang String
 )
-engine = ReplicatedReplacingMergeTree('/clickhouse/tables/{shard}/stg_dm_forecast_actual_data_v2', '{replica}', create_dttm)
-ORDER BY (owd_id, lang, forecast_ddtm);
+engine = ReplicatedReplacingMergeTree('/clickhouse/tables/{shard}/dm_forecast_actual_data_v2', '{replica}', create_dttm)
+ORDER BY (owd_id, city, lang, forecast_dttm);
 --Дистр таблица
 CREATE TABLE IF NOT EXISTS main.dm_forecast_actual_data_distributed ON cluster 'main'
 AS main.dm_forecast_actual_data
@@ -131,7 +131,7 @@ CREATE TABLE IF NOT EXISTS main.stg_dm_forecast_all_data on cluster 'main'
 	cloud_level Nullable(Int),
 	general_condition String,
 	forecast_diff Int,
-	forecast_ddtm DateTime,
+	forecast_dttm DateTime,
 	create_dttm DateTime,
 	upload_dttm DateTime,
 	translate_dttm Nullable(DateTime),
@@ -161,13 +161,13 @@ CREATE TABLE IF NOT EXISTS main.dm_forecast_all_data on cluster 'main'
 	cloud_level Nullable(Int),
 	general_condition String,
 	forecast_diff Int,
-	forecast_ddtm DateTime,
+	forecast_dttm DateTime,
 	create_dttm DateTime,
 	upload_dttm DateTime,
 	translate_dttm Nullable(DateTime),
 	lang String
 )
-engine = ReplicatedMergeTree('/clickhouse/tables/{shard}/stg_dm_forecast_all_data_v2', '{replica}')
+engine = ReplicatedMergeTree('/clickhouse/tables/{shard}/dm_forecast_all_data_v2', '{replica}')
 ORDER BY (id, divide_id, ds_id, owd_id);
 --Дистр таблица
 CREATE TABLE IF NOT EXISTS main.dm_forecast_all_data_distributed ON cluster 'main'
