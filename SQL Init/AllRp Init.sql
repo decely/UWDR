@@ -44,7 +44,7 @@ ORDER BY (id, ds_id, owd_id)
 TTL upload_dttm + INTERVAL 6 MONTH;
 
 
---Буферная таблица переведенных даных DS слоя
+--Буферная таблица переведенных погодных данных DS слоя
 CREATE TABLE IF NOT EXISTS allrp.ds_buffer_translated_weather_data on cluster 'all-replicated'
 (
 	id UUID,
@@ -58,7 +58,7 @@ engine = ReplicatedMergeTree('/clickhouse/tables/all-replicated/ds_buffer_transl
 ORDER BY (id, owd_id);
 
 
---Таблица переведенных данных DS слоя
+--Таблица переведенных погодных данных DS слоя
 CREATE TABLE IF NOT EXISTS allrp.ds_dim_translated_weather_data on cluster 'all-replicated'
 (
 	id UUID,
@@ -82,6 +82,69 @@ ORDER BY (id, ds_id, owd_id)
 TTL translate_dttm + INTERVAL 6 MONTH;
 
 
+--Таблица распределенных по колонкам данных прогноза
+CREATE TABLE IF NOT EXISTS allrp.ds_dim_forecast_data on cluster 'all-replicated'
+(
+	id UUID,
+	divide_id UUID,
+	ds_id UUID,
+	owd_id UUID,
+	city String,
+	temp Nullable(Float64),
+	wind_speed Nullable(Float64),
+	wind_direction String,
+	atmospheric_pressure Nullable(Int),
+	humidity Nullable(Int),
+	cloud_level Nullable(Int),
+	general_condition String,
+	create_dttm DateTime,
+	upload_dttm DateTime
+)
+engine = ReplicatedMergeTree('/clickhouse/tables/all-replicated/ds_dim_forecast_data_v2', '{replica}')
+ORDER BY (id, divide_id, ds_id, owd_id)
+TTL upload_dttm + INTERVAL 6 MONTH;
+
+
+--Буферная таблица переведенных данных прогноза DS слоя
+CREATE TABLE IF NOT EXISTS allrp.ds_buffer_translated_forecast_data on cluster 'all-replicated'
+(
+	id UUID,
+	divide_id UUID,
+	owd_id UUID,
+	lang String,
+	city String,
+	wind_direction String,
+	general_condition String
+)
+engine = ReplicatedMergeTree('/clickhouse/tables/all-replicated/ds_buffer_translated_forecast_data_v2', '{replica}')
+ORDER BY (id, divide_id, owd_id);
+
+
+--Таблица переведенных данных прогноза DS слоя
+CREATE TABLE IF NOT EXISTS allrp.ds_dim_translated_forecast_data on cluster 'all-replicated'
+(
+	id UUID,
+	divide_id UUID,
+	ds_id UUID,
+	owd_id UUID,
+	city String,
+	temp Nullable(Float64),
+	wind_speed Nullable(Float64),
+	wind_direction String,
+	atmospheric_pressure Nullable(Int),
+	humidity Nullable(Int),
+	cloud_level Nullable(Int),
+	general_condition String,
+	create_dttm DateTime,
+	upload_dttm DateTime,
+	translate_dttm DateTime,
+	lang String
+)
+engine = ReplicatedMergeTree('/clickhouse/tables/all-replicated/ds_dim_translated_forecast_data_v2', '{replica}')
+ORDER BY (id, divide_id, ds_id, owd_id)
+TTL translate_dttm + INTERVAL 6 MONTH;
+
+
 --Таблица перевода погодных данных
 CREATE TABLE IF NOT EXISTS allrp.ds_dim_trans on cluster 'all-replicated'(
     origin String,
@@ -95,7 +158,7 @@ ORDER BY (origin)
 --Словари
 
 --Словарь перевода погодных данных
-CREATE DICTIONARY if not exists allrp.dic_ds_dim_ord ON CLUSTER 'all-replicated'
+CREATE DICTIONARY if not exists allrp.dic_ds_dim_trans ON CLUSTER 'all-replicated'
 (
     origin String,
     ru String,
