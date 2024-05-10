@@ -17,19 +17,19 @@ def need_to_update_translation_table() -> str:
     sql = """
     SELECT origin FROM (
     SELECT DISTINCT
-    	city AS `origin`
+        city AS `origin`
     FROM allrp.ds_dim_weather_data
     UNION ALL
     SELECT DISTINCT
-    	wind_direction AS `origin`
+        wind_direction AS `origin`
     FROM allrp.ds_dim_weather_data
     UNION ALL
     SELECT DISTINCT
-    	general_condition AS `origin`
+        general_condition AS `origin`
     FROM allrp.ds_dim_weather_data
     )
     WHERE origin NOT IN (
-    	SELECT origin FROM allrp.ds_dim_trans
+        SELECT origin FROM allrp.ds_dim_trans
     )
     """
 
@@ -70,7 +70,7 @@ def prepare_load_translate_table() -> str:
     general_condition AS `origin`
     FROM allrp.ds_dim_weather_data
     WHERE origin NOT IN (
-    	SELECT origin FROM allrp.ds_dim_trans
+        SELECT origin FROM allrp.ds_dim_trans
     )
     order by origin
     """
@@ -79,7 +79,7 @@ def prepare_load_translate_table() -> str:
         sql=sql,
     )
     row = len(sql_result)
-    column = len(langs)+1
+    column = len(langs) + 1
     translate_result = []
 
     for y in range(0, column):
@@ -94,7 +94,7 @@ def prepare_load_translate_table() -> str:
                     to_translate = 'Cloudy'
                 if "rain" not in to_translate:
                     to_translate = to_translate + ' weather'
-                translate = argostranslate.translate.translate(to_translate, 'en', langs[y-1])
+                translate = argostranslate.translate.translate(to_translate, 'en', langs[y - 1])
                 to_translate = translate[0].upper() + translate[1:].lower()
             translate_result[y].append(to_translate)
 
@@ -117,15 +117,15 @@ def prepare_load_translate_table() -> str:
     sql = """
     SELECT origin FROM (
     SELECT DISTINCT
-    	wind_direction AS `origin`
+        wind_direction AS `origin`
     FROM allrp.ds_dim_weather_data
     UNION ALL
     SELECT DISTINCT
-    	city AS `origin`
+        city AS `origin`
     FROM allrp.ds_dim_weather_data
     )
     WHERE origin NOT IN (
-    	SELECT origin FROM allrp.ds_dim_trans
+        SELECT origin FROM allrp.ds_dim_trans
     )
     """
 
@@ -133,7 +133,7 @@ def prepare_load_translate_table() -> str:
         sql=sql,
     )
     row = len(sql_result)
-    column = len(langs)+1
+    column = len(langs) + 1
     translate_result = []
 
     for y in range(0, column):
@@ -141,14 +141,17 @@ def prepare_load_translate_table() -> str:
         for x in range(0, row):
             to_translate = sql_result[x][0]
             if y != 0:
-                translate = argostranslate.translate.translate(to_translate, 'en', langs[y-1])
+                translate = argostranslate.translate.translate(to_translate, 'en', langs[y - 1])
                 to_translate = translate[0].upper() + translate[1:].lower()
             translate_result[y].append(to_translate)
 
     values_sql = ''
 
     for x in range(0, row):
-        values_sql = values_sql + ",("
+        if values != '':
+            values_sql = values_sql + ",("
+        else:
+            values_sql = "("
         for y in range(0, column):
             if y == 0:
                 values_sql = values_sql + f"'{translate_result[y][x]}'"
@@ -159,6 +162,7 @@ def prepare_load_translate_table() -> str:
     values = values + values_sql
 
     return values
+
 
 def load_translation_to_weather(**context) -> None:
     """Запись переведенных погодных данных в буферную таблицу"""
@@ -179,6 +183,18 @@ def load_translation_to_weather(**context) -> None:
     VALUES""".format(
         insert_list=insert_list
     ) + insert_sql
+
+    ch_run_query_empty(
+        sql=sql,
+    )
+
+
+def reload_translation_dict() -> None:
+    """Перезагрузка словаря с переводом слов"""
+
+    sql = """
+    SYSTEM RELOAD DICTIONARY allrp.dic_ds_dim_trans;
+    """
 
     ch_run_query_empty(
         sql=sql,
