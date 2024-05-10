@@ -32,7 +32,7 @@ def get_owd_api_and_id() -> List:
     return result
 
 
-def load_raw_forecast_data_by_api(cities_list, **context) -> None:
+def load_raw_forecast_data_by_api(cities_list, api_url_list, **context) -> None:
     """Получение сырых данных прогноза через API"""
 
     api_info = context['ti'].xcom_pull(task_ids='get_owd_api_and_id')
@@ -44,10 +44,7 @@ def load_raw_forecast_data_by_api(cities_list, **context) -> None:
             api = row[2]
             logger.info(f"Получение сырых данных прогноза от оператора {owd_name}")
 
-            if owd_name == 'OpenWeatherMap':
-                url = f"http://api.openweathermap.org/data/2.5/forecast?q={city}&appid={api}&units=metric"
-            elif owd_name == 'WeatherApi':
-                url = f"http://api.weatherapi.com/v1/forecast.json?key={api}&q={city}&aqi=no&days=3"
+            url = api_url_list[owd_name] + f"{api}&q={city}"
 
             data = requests.get(url).json()
             json_string = json.dumps(data)

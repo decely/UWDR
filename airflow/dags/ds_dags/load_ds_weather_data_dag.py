@@ -1,10 +1,13 @@
 from datetime import datetime
 
 from airflow import DAG
+from airflow.models import Variable
 from airflow.operators.empty import EmptyOperator
 from airflow.operators.python import PythonOperator, BranchPythonOperator
 
 from services.ds_services.load_ds_weather import load_weather_data_from_ods_to_ds, need_to_load_weather_data
+
+owd_json_mapping = Variable.get(key='owd_json_mapping', deserialize_json=True)
 
 dag_params = {
     'dag_id': 'load_ds_weather_data_dag',
@@ -30,6 +33,9 @@ with DAG(**dag_params) as dag:  # type: ignore
     load_weather_data_from_ods_to_ds = PythonOperator(
         task_id='load_weather_data_from_ods_to_ds',
         python_callable=load_weather_data_from_ods_to_ds,
+        op_kwargs={
+            'owd_mapping': owd_json_mapping["weather_mapping"],
+        },
     )
 
     finish = EmptyOperator(task_id='finish', trigger_rule='none_failed_min_one_success')

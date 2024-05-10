@@ -4,7 +4,11 @@ from airflow import DAG
 from airflow.operators.empty import EmptyOperator
 from airflow.operators.python import PythonOperator, BranchPythonOperator
 
-from services.ods_services.load_ods_raw_forecast_divided import need_to_divide_forecast_data, load_raw_divided_forecast_data
+from services.ods_services.load_ods_raw_forecast_divided import (
+    need_to_divide_forecast_data,
+    load_raw_divided_forecast_data,
+    prepare_load_raw_divided_data,
+)
 
 
 dag_params = {
@@ -27,6 +31,12 @@ with DAG(**dag_params) as dag:  # type: ignore
     )
 
     load_needed = EmptyOperator(task_id='load_needed')
+
+    prepare_load_raw_divided_data = PythonOperator(
+        task_id='prepare_load_raw_divided_data'
+        python_callable=prepare_load_raw_divided_data,
+        do_xcom_push=True,
+    )
 
     load_raw_divided_forecast_data = PythonOperator(
         task_id='load_raw_divided_forecast_data',
