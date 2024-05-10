@@ -26,10 +26,10 @@ def need_to_divide_forecast_data() -> str:
     )
 
     if len(result) != 0:
-        logger.info("Необходима загрузка новых погодных данных")
+        logger.info("Необходима разделение новых данных прогноза")
         return 'load_needed'
     else:
-        logger.info("Погодные данные актуальны, нет надобности в загрузке")
+        logger.info("Данные прогноза актуальны, нет надобности в загрузке")
         return 'finish'
 
 
