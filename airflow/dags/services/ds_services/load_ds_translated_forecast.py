@@ -1,5 +1,4 @@
 import logging
-from typing import List
 
 from airflow.models import Variable
 
@@ -88,7 +87,7 @@ def load_forecast_data_to_buffer() -> None:
         where (id, divide_id, owd_id, '{lang}') not in(
             select id, divide_id, owd_id, lang from allrp.ds_dim_translated_forecast_data
         )""".format(
-            lang = lang
+            lang=lang
         )
 
         ch_run_query_empty(
@@ -114,7 +113,7 @@ def load_from_buffer_to_ds() -> None:
         humidity,
         cloud_level,
         general_condition,
-	    forecast_ddtm,
+        forecast_ddtm,
         create_dttm,
         upload_dttm,
         translate_dttm,

@@ -44,7 +44,7 @@ def prepare_load_raw_divided_data(owd_mapping) -> str:
 
         if not first_owd:
             pre_sql = pre_sql + '\n\tUNION ALL\n\t'
-            first_num = False
+            first_owd = False
 
         pre_sql = pre_sql + """
         SELECT
@@ -58,11 +58,10 @@ def prepare_load_raw_divided_data(owd_mapping) -> str:
         where owd_name = {owd[0]}
         ORDER BY id
         """.format(
-            owd = owd
+            owd=owd
         )
 
     return pre_sql
-
 
 
 def load_raw_divided_forecast_data(**context) -> None:
@@ -96,7 +95,7 @@ def load_raw_divided_forecast_data(**context) -> None:
     AND (id, owd_id) not in(select id, owd_id from allsh.ods_raw_divided_forecast_data_distributed)
     SETTINGS distributed_product_mode = 'allow'
     """.format(
-        pre_sql = pre_sql
+        pre_sql=pre_sql
     )
 
     ch_run_query_empty(

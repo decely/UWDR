@@ -32,7 +32,7 @@ with DAG(**dag_params) as dag:  # type: ignore
         trigger_rule='all_done',
     )
 
-    trigger_load_ods_forecast_data_divided_dag = TriggerDagRunOperator(
+    trigger_load_ods_raw_forecast_data_divided_dag = TriggerDagRunOperator(
         task_id='trigger_load_ods_forecast_data_divided_dag',
         trigger_dag_id='load_ods_forecast_data_divided_dag',
         wait_for_completion=True,
@@ -72,6 +72,14 @@ with DAG(**dag_params) as dag:  # type: ignore
         trigger_rule='all_done',
     )
 
+    trigger_load_dm_forecast_all_data_dag = TriggerDagRunOperator(
+        task_id='trigger_load_dm_forecast_all_data_dag',
+        trigger_dag_id='load_dm_forecast_all_data_dag',
+        wait_for_completion=True,
+        poke_interval=10,
+        trigger_rule='all_done',
+    )
+
     finish = EmptyOperator(task_id='finish')
 
     start >> \
@@ -81,4 +89,5 @@ with DAG(**dag_params) as dag:  # type: ignore
         trigger_load_ds_translation_table_data_dag >> \
         trigger_load_ds_forecast_translated_data_dag >> \
         trigger_load_dm_forecast_actual_data_dag >> \
+        trigger_load_dm_forecast_all_data_dag >> \
         finish
