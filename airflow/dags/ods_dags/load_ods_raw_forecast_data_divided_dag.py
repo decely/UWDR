@@ -33,7 +33,7 @@ with DAG(**dag_params) as dag:  # type: ignore
     load_needed = EmptyOperator(task_id='load_needed')
 
     prepare_load_raw_divided_data = PythonOperator(
-        task_id='prepare_load_raw_divided_data'
+        task_id='prepare_load_raw_divided_data',
         python_callable=prepare_load_raw_divided_data,
         do_xcom_push=True,
     )

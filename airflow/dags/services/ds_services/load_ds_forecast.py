@@ -52,7 +52,7 @@ def load_forecast_data_from_ods_to_ds(owd_mapping) -> None:
             humidity,
             cloud_level,
             general_condition,
-	        forecast_ddtm,
+            forecast_ddtm,
             create_dttm,
             upload_dttm
         )
@@ -93,7 +93,7 @@ def load_forecast_data_from_ods_to_ds(owd_mapping) -> None:
         WHERE JSONExtractString(json_string, 'error') = ''
         AND JSONExtractString(json_string, 'cod') in('200','')
         """.format(
-            owd = owd
+            owd=owd
         )
 
         ch_run_query_empty(
