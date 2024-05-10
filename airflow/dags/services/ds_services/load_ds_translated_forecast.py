@@ -114,6 +114,7 @@ def load_from_buffer_to_ds() -> None:
         humidity,
         cloud_level,
         general_condition,
+	    forecast_ddtm,
         create_dttm,
         upload_dttm,
         translate_dttm,
