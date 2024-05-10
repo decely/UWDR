@@ -5,11 +5,11 @@ from plugins.uwdr_hook import ch_run_query_empty
 logger = logging.getLogger('airflow.task')
 
 
-def truncate_stg_forecast_actual_data_table() -> None:
+def truncate_stg_forecast_all_data_table() -> None:
     """Очистка STG таблицы для записи готовых данных"""
 
     sql = """
-    truncate table if exists main.stg_dm_forecast_actual_data on cluster 'main' sync;
+    truncate table if exists main.stg_dm_forecast_all_data on cluster 'main' sync;
     """
 
     ch_run_query_empty(
@@ -17,11 +17,11 @@ def truncate_stg_forecast_actual_data_table() -> None:
     )
 
 
-def load_stg_forecast_actual_data_table() -> None:
+def load_stg_forecast_all_data_table() -> None:
     """Загрузка готовых данных в STG таблицу"""
 
     sql = """
-    INSERT INTO main.stg_dm_forecast_actual_data_distributed(
+    INSERT INTO main.stg_dm_forecast_all_data_distributed(
         id,
         divide_id,
         ds_id,
@@ -34,6 +34,7 @@ def load_stg_forecast_actual_data_table() -> None:
         humidity,
         cloud_level,
         general_condition,
+        forecast_diff,
         forecast_dttm,
         create_dttm,
         upload_dttm,
@@ -53,6 +54,7 @@ def load_stg_forecast_actual_data_table() -> None:
         humidity,
         cloud_level,
         general_condition,
+        forecast_dttm - create_dttm as forecast_diff,
         forecast_dttm,
         create_dttm,
         upload_dttm,
@@ -73,6 +75,7 @@ def load_stg_forecast_actual_data_table() -> None:
         humidity,
         cloud_level,
         general_condition,
+        forecast_dttm - create_dttm as forecast_diff,
         forecast_dttm,
         create_dttm,
         upload_dttm,
@@ -90,8 +93,8 @@ def exchange_stg_and_dm_table() -> None:
     """Смена названий STG и DM таблиц"""
 
     sql = """
-    EXCHANGE TABLES main.stg_dm_forecast_actual_data
-    and main.dm_forecast_actual_data on cluster 'main';
+    EXCHANGE TABLES main.stg_dm_forecast_all_data
+    and main.dm_forecast_all_data on cluster 'main';
     """
 
     ch_run_query_empty(
