@@ -65,6 +65,8 @@ def update_translate_libraries_if_needed() -> None:
 def prepare_load_translate_table() -> str:
     """Подготовка к заполнению таблицы с переводом"""
 
+    logger.info('Подготовка к заполнению таблицы с переводом по общему состоянию погоды...')
+
     sql = """
     SELECT DISTINCT
     general_condition AS `origin`
@@ -114,6 +116,8 @@ def prepare_load_translate_table() -> str:
 
     values = values_sql
 
+    logger.info('Подготовка к заполнению таблицы с переводом по оставшимся состояниям...')
+
     sql = """
     SELECT origin FROM (
     SELECT DISTINCT
@@ -160,6 +164,8 @@ def prepare_load_translate_table() -> str:
         values_sql = values_sql + ")\n\t"
 
     values = values + values_sql
+
+    logger.info('Слова переведены, подготовка к заполнению таблицы с переводом завершена')
 
     return values
 
