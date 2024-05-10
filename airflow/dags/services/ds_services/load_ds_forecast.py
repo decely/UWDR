@@ -50,6 +50,7 @@ def load_forecast_data_from_ods_to_ds() -> None:
         humidity,
         cloud_level,
         general_condition,
+	    forecast_ddtm,
         create_dttm,
         upload_dttm
     )
