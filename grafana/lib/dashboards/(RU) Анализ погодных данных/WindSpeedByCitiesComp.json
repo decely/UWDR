@@ -1,0 +1,1357 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "description": "Скорость ветра по городам",
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": 75,
+  "links": [],
+  "panels": [
+    {
+      "datasource": {
+        "type": "grafana-clickhouse-datasource",
+        "uid": "adkreilk9migwa"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic-by-name",
+            "seriesBy": "last"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "series",
+            "axisLabel": "Скорость (м/с)",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "smooth",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 0
+      },
+      "id": 13,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "grafana-clickhouse-datasource",
+            "uid": "adkreilk9migwa"
+          },
+          "editorType": "sql",
+          "format": 1,
+          "meta": {
+            "builderOptions": {
+              "columns": [],
+              "database": "",
+              "limit": 1000,
+              "mode": "list",
+              "queryType": "table",
+              "table": ""
+            }
+          },
+          "pluginVersion": "4.0.6",
+          "queryType": "table",
+          "rawSql": "SELECT\r\n\tfcst.forecast_dttm,\r\n\tdm.city as city,\r\n\tfcst.wind_speed as `Скорость пронгоз`,\r\n\tdm.wind_speed as `Скорость факт`\r\n  from main.dm_weather_data_distributed dm\r\njoin allrp.ds_dim_owd dim on dm.owd_id = dim.owd_id\r\nJOIN main.dm_forecast_actual_data_distributed fcst ON toStartOfFiveMinutes(dm.create_dttm) = toStartOfFiveMinutes(forecast_dttm)\r\n\tAND dm.owd_id = fcst.owd_id\r\n\tAND dm.lang = fcst.lang\r\n\tAND dm.city = fcst.city\r\nwhere owd_name = 'OpenWeatherMap'\r\nand dm.lang = 'ru'\r\norder by dm.city\r\nSETTINGS distributed_product_mode = 'allow'",
+          "refId": "A"
+        }
+      ],
+      "title": "Скорость ветра (м/c) прогноза (последнего) и фактической  по источнику OpenWeatherMap",
+      "transformations": [
+        {
+          "id": "partitionByValues",
+          "options": {
+            "fields": [
+              "city"
+            ],
+            "keepFields": false
+          }
+        }
+      ],
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "grafana-clickhouse-datasource",
+        "uid": "adkreilk9migwa"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic-by-name",
+            "seriesBy": "last"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "series",
+            "axisLabel": "Скорость (м/с)",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "smooth",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 0
+      },
+      "id": 18,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "grafana-clickhouse-datasource",
+            "uid": "adkreilk9migwa"
+          },
+          "editorType": "sql",
+          "format": 1,
+          "meta": {
+            "builderOptions": {
+              "columns": [],
+              "database": "",
+              "limit": 1000,
+              "mode": "list",
+              "queryType": "table",
+              "table": ""
+            }
+          },
+          "pluginVersion": "4.0.6",
+          "queryType": "table",
+          "rawSql": "SELECT\r\n\tfcst.forecast_dttm,\r\n\tdm.city as city,\r\n\tfcst.wind_speed as `Скорость пронгоз`,\r\n\tdm.wind_speed as `Скорость факт`\r\n  from main.dm_weather_data_distributed dm\r\njoin allrp.ds_dim_owd dim on dm.owd_id = dim.owd_id\r\nJOIN main.dm_forecast_actual_data_distributed fcst ON toStartOfFiveMinutes(dm.create_dttm) = toStartOfFiveMinutes(forecast_dttm)\r\n\tAND dm.owd_id = fcst.owd_id\r\n\tAND dm.lang = fcst.lang\r\n\tAND dm.city = fcst.city\r\nwhere owd_name = 'WeatherApi'\r\nand dm.lang = 'ru'\r\norder by dm.city\r\nSETTINGS distributed_product_mode = 'allow'",
+          "refId": "A"
+        }
+      ],
+      "title": "Скорость ветра (м/c) прогноза (последнего) и фактической  по источнику WeatherApi",
+      "transformations": [
+        {
+          "id": "partitionByValues",
+          "options": {
+            "fields": [
+              "city"
+            ],
+            "keepFields": false
+          }
+        }
+      ],
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "grafana-clickhouse-datasource",
+        "uid": "adkreilk9migwa"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "series",
+            "axisLabel": "Точность (%)",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "smooth",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 8
+      },
+      "id": 17,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "grafana-clickhouse-datasource",
+            "uid": "adkreilk9migwa"
+          },
+          "editorType": "sql",
+          "format": 1,
+          "meta": {
+            "builderOptions": {
+              "columns": [],
+              "database": "",
+              "limit": 1000,
+              "mode": "list",
+              "queryType": "table",
+              "table": ""
+            }
+          },
+          "pluginVersion": "4.0.6",
+          "queryType": "table",
+          "rawSql": "SELECT\r\n\tfcst.forecast_dttm,\r\n\tdm.city as city,\r\n\t(1 + floor(IF(dm.wind_speed < fcst.wind_speed,(dm.wind_speed - fcst.wind_speed)/fcst.wind_speed, (fcst.wind_speed - dm.wind_speed)/dm.wind_speed), 2)) * 100 AS `Точность` from main.dm_weather_data_distributed dm\r\njoin allrp.ds_dim_owd dim on dm.owd_id = dim.owd_id\r\nJOIN main.dm_forecast_actual_data_distributed fcst ON toStartOfFiveMinutes(dm.create_dttm) = toStartOfFiveMinutes(forecast_dttm)\r\n\tAND dm.owd_id = fcst.owd_id\r\n\tAND dm.lang = fcst.lang\r\n\tAND dm.city = fcst.city\r\nwhere owd_name = 'OpenWeatherMap'\r\nand dm.lang = 'ru'\r\norder by dm.city\r\nSETTINGS distributed_product_mode = 'allow'",
+          "refId": "A"
+        }
+      ],
+      "title": "Точность прогноза скорости ветра (%) по источнику OpenWeatherMap (по последнему прогнозу)",
+      "transformations": [
+        {
+          "id": "partitionByValues",
+          "options": {
+            "fields": [
+              "city"
+            ],
+            "keepFields": false
+          }
+        }
+      ],
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "grafana-clickhouse-datasource",
+        "uid": "adkreilk9migwa"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "series",
+            "axisLabel": "Точность (%)",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "smooth",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 8
+      },
+      "id": 19,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "grafana-clickhouse-datasource",
+            "uid": "adkreilk9migwa"
+          },
+          "editorType": "sql",
+          "format": 1,
+          "meta": {
+            "builderOptions": {
+              "columns": [],
+              "database": "",
+              "limit": 1000,
+              "mode": "list",
+              "queryType": "table",
+              "table": ""
+            }
+          },
+          "pluginVersion": "4.0.6",
+          "queryType": "table",
+          "rawSql": "SELECT\r\n\tfcst.forecast_dttm,\r\n\tdm.city as city,\r\n\t(1 + floor(IF(dm.wind_speed < fcst.wind_speed,(dm.wind_speed - fcst.wind_speed)/fcst.wind_speed, (fcst.wind_speed - dm.wind_speed)/dm.wind_speed), 2)) * 100 AS `Точность` from main.dm_weather_data_distributed dm\r\njoin allrp.ds_dim_owd dim on dm.owd_id = dim.owd_id\r\nJOIN main.dm_forecast_actual_data_distributed fcst ON toStartOfFiveMinutes(dm.create_dttm) = toStartOfFiveMinutes(forecast_dttm)\r\n\tAND dm.owd_id = fcst.owd_id\r\n\tAND dm.lang = fcst.lang\r\n\tAND dm.city = fcst.city\r\nwhere owd_name = 'WeatherApi'\r\nand dm.lang = 'ru'\r\norder by dm.city\r\nSETTINGS distributed_product_mode = 'allow'",
+          "refId": "A"
+        }
+      ],
+      "title": "Точность прогноза скорости ветра (%) по источнику WeatherApi(по последнему прогнозу)",
+      "transformations": [
+        {
+          "id": "partitionByValues",
+          "options": {
+            "fields": [
+              "city"
+            ],
+            "keepFields": false
+          }
+        }
+      ],
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "grafana-clickhouse-datasource",
+        "uid": "adkreilk9migwa"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "continuous-RdYlGr"
+          },
+          "mappings": [],
+          "max": 100,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 12,
+        "x": 0,
+        "y": 16
+      },
+      "id": 15,
+      "options": {
+        "displayMode": "lcd",
+        "maxVizHeight": 300,
+        "minVizHeight": 16,
+        "minVizWidth": 8,
+        "namePlacement": "auto",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showUnfilled": true,
+        "sizing": "auto",
+        "valueMode": "color"
+      },
+      "pluginVersion": "10.4.2",
+      "targets": [
+        {
+          "datasource": {
+            "type": "grafana-clickhouse-datasource",
+            "uid": "adkreilk9migwa"
+          },
+          "editorType": "sql",
+          "format": 1,
+          "meta": {
+            "builderOptions": {
+              "columns": [],
+              "database": "",
+              "limit": 1000,
+              "mode": "list",
+              "queryType": "table",
+              "table": ""
+            }
+          },
+          "pluginVersion": "4.0.6",
+          "queryType": "table",
+          "rawSql": "SELECT\r\n\tdm.city as city,\r\n\tfloor(avg((1 + floor(IF(dm.wind_speed < fcst.wind_speed,(dm.wind_speed - fcst.wind_speed)/fcst.wind_speed, (fcst.wind_speed - dm.wind_speed)/dm.wind_speed), 2)) * 100),2) AS `Точность прогноза`\r\nfrom main.dm_weather_data_distributed dm\r\njoin allrp.ds_dim_owd dim on dm.owd_id = dim.owd_id\r\nJOIN main.dm_forecast_actual_data_distributed fcst ON toStartOfFiveMinutes(dm.create_dttm) = toStartOfFiveMinutes(forecast_dttm)\r\n\tAND dm.owd_id = fcst.owd_id\r\n\tAND dm.lang = fcst.lang\r\n\tAND dm.city = fcst.city\r\nwhere owd_name = 'OpenWeatherMap'\r\nand dm.lang = 'ru'\r\nand forecast_dttm BETWEEN parseDateTime64BestEffortOrZero('${__from:date}') AND parseDateTime64BestEffortOrZero('${__to:date}')\r\ngroup by dm.city\r\norder by `Точность прогноза`\r\nSETTINGS distributed_product_mode = 'allow'",
+          "refId": "A"
+        }
+      ],
+      "title": "Средняя точность прогноза скорости ветра (%) по источнику OpenWeatherMap (по последнему прогнозу)",
+      "transformations": [
+        {
+          "id": "partitionByValues",
+          "options": {
+            "fields": [
+              "city"
+            ],
+            "keepFields": false
+          }
+        }
+      ],
+      "type": "bargauge"
+    },
+    {
+      "datasource": {
+        "type": "grafana-clickhouse-datasource",
+        "uid": "adkreilk9migwa"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "continuous-RdYlGr"
+          },
+          "mappings": [],
+          "max": 100,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 12,
+        "x": 12,
+        "y": 16
+      },
+      "id": 20,
+      "options": {
+        "displayMode": "lcd",
+        "maxVizHeight": 300,
+        "minVizHeight": 16,
+        "minVizWidth": 8,
+        "namePlacement": "auto",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showUnfilled": true,
+        "sizing": "auto",
+        "valueMode": "color"
+      },
+      "pluginVersion": "10.4.2",
+      "targets": [
+        {
+          "datasource": {
+            "type": "grafana-clickhouse-datasource",
+            "uid": "adkreilk9migwa"
+          },
+          "editorType": "sql",
+          "format": 1,
+          "meta": {
+            "builderOptions": {
+              "columns": [],
+              "database": "",
+              "limit": 1000,
+              "mode": "list",
+              "queryType": "table",
+              "table": ""
+            }
+          },
+          "pluginVersion": "4.0.6",
+          "queryType": "table",
+          "rawSql": "SELECT\r\n\tdm.city as city,\r\n\tfloor(avg((1 + floor(IF(dm.wind_speed < fcst.wind_speed,(dm.wind_speed - fcst.wind_speed)/fcst.wind_speed, (fcst.wind_speed - dm.wind_speed)/dm.wind_speed), 2)) * 100),2) AS `Точность прогноза`\r\nfrom main.dm_weather_data_distributed dm\r\njoin allrp.ds_dim_owd dim on dm.owd_id = dim.owd_id\r\nJOIN main.dm_forecast_actual_data_distributed fcst ON toStartOfFiveMinutes(dm.create_dttm) = toStartOfFiveMinutes(forecast_dttm)\r\n\tAND dm.owd_id = fcst.owd_id\r\n\tAND dm.lang = fcst.lang\r\n\tAND dm.city = fcst.city\r\nwhere owd_name = 'WeatherApi'\r\nand dm.lang = 'ru'\r\nand forecast_dttm BETWEEN parseDateTime64BestEffortOrZero('${__from:date}') AND parseDateTime64BestEffortOrZero('${__to:date}')\r\ngroup by dm.city\r\norder by `Точность прогноза`\r\nSETTINGS distributed_product_mode = 'allow'",
+          "refId": "A"
+        }
+      ],
+      "title": "Средняя точность прогноза скорости ветра (%) по источнику WeatherApi(по последнему прогнозу)",
+      "transformations": [
+        {
+          "id": "partitionByValues",
+          "options": {
+            "fields": [
+              "city"
+            ],
+            "keepFields": false
+          }
+        }
+      ],
+      "type": "bargauge"
+    },
+    {
+      "datasource": {
+        "type": "grafana-clickhouse-datasource",
+        "uid": "adkreilk9migwa"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic-by-name",
+            "seriesBy": "last"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "series",
+            "axisLabel": "Скорость ветра (м/с)",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "smooth",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 19
+      },
+      "id": 1,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "grafana-clickhouse-datasource",
+            "uid": "adkreilk9migwa"
+          },
+          "editorType": "sql",
+          "format": 1,
+          "meta": {
+            "builderOptions": {
+              "columns": [],
+              "database": "",
+              "limit": 1000,
+              "mode": "list",
+              "queryType": "table",
+              "table": ""
+            }
+          },
+          "pluginVersion": "4.0.6",
+          "queryType": "table",
+          "rawSql": "SELECT\r\n\tfcst.forecast_dttm,\r\n\tdm.city as city,\r\n\tfcst.wind_speed as `Скорость пронгоз`,\r\n\tdm.wind_speed as `Скорость факт`\r\n  from main.dm_weather_data_distributed dm\r\njoin allrp.ds_dim_owd dim on dm.owd_id = dim.owd_id\r\nJOIN main.dm_forecast_all_data_distributed fcst ON toStartOfFiveMinutes(dm.create_dttm) = toStartOfFiveMinutes(forecast_dttm)\r\n\tAND dm.owd_id = fcst.owd_id\r\n\tAND dm.lang = fcst.lang\r\n\tAND dm.city = fcst.city\r\nwhere owd_name = 'OpenWeatherMap'\r\nand dm.lang = 'ru'\r\nand forecast_diff = 24\r\norder by dm.city\r\nSETTINGS distributed_product_mode = 'allow'",
+          "refId": "A"
+        }
+      ],
+      "title": "Cкорость ветра (м/с) прогноза (по следующему дню) и фактической  по источнику OpenWeatherMap",
+      "transformations": [
+        {
+          "id": "partitionByValues",
+          "options": {
+            "fields": [
+              "city"
+            ],
+            "keepFields": false
+          }
+        }
+      ],
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "grafana-clickhouse-datasource",
+        "uid": "adkreilk9migwa"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic-by-name",
+            "seriesBy": "last"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "series",
+            "axisLabel": "Скорость ветра (м/с)",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "smooth",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 19
+      },
+      "id": 21,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "grafana-clickhouse-datasource",
+            "uid": "adkreilk9migwa"
+          },
+          "editorType": "sql",
+          "format": 1,
+          "meta": {
+            "builderOptions": {
+              "columns": [],
+              "database": "",
+              "limit": 1000,
+              "mode": "list",
+              "queryType": "table",
+              "table": ""
+            }
+          },
+          "pluginVersion": "4.0.6",
+          "queryType": "table",
+          "rawSql": "SELECT\r\n\tfcst.forecast_dttm,\r\n\tdm.city as city,\r\n\tfcst.wind_speed as `Скорость пронгоз`,\r\n\tdm.wind_speed as `Скорость факт`\r\n  from main.dm_weather_data_distributed dm\r\njoin allrp.ds_dim_owd dim on dm.owd_id = dim.owd_id\r\nJOIN main.dm_forecast_all_data_distributed fcst ON toStartOfFiveMinutes(dm.create_dttm) = toStartOfFiveMinutes(forecast_dttm)\r\n\tAND dm.owd_id = fcst.owd_id\r\n\tAND dm.lang = fcst.lang\r\n\tAND dm.city = fcst.city\r\nwhere owd_name = 'WeatherApi'\r\nand dm.lang = 'ru'\r\nand forecast_diff = 24\r\norder by dm.city\r\nSETTINGS distributed_product_mode = 'allow'",
+          "refId": "A"
+        }
+      ],
+      "title": "Cкорость ветра (м/с) прогноза (по следующему дню) и фактической  по источнику WeatherApi",
+      "transformations": [
+        {
+          "id": "partitionByValues",
+          "options": {
+            "fields": [
+              "city"
+            ],
+            "keepFields": false
+          }
+        }
+      ],
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "grafana-clickhouse-datasource",
+        "uid": "adkreilk9migwa"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "series",
+            "axisLabel": "Точность (%)",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "smooth",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 27
+      },
+      "id": 4,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "grafana-clickhouse-datasource",
+            "uid": "adkreilk9migwa"
+          },
+          "editorType": "sql",
+          "format": 1,
+          "meta": {
+            "builderOptions": {
+              "columns": [],
+              "database": "",
+              "limit": 1000,
+              "mode": "list",
+              "queryType": "table",
+              "table": ""
+            }
+          },
+          "pluginVersion": "4.0.6",
+          "queryType": "table",
+          "rawSql": "SELECT\r\n\tfcst.forecast_dttm,\r\n\tdm.city as city,\r\n\t(1 + floor(IF(dm.wind_speed < fcst.wind_speed,(dm.wind_speed - fcst.wind_speed)/fcst.wind_speed, (fcst.wind_speed - dm.wind_speed)/dm.wind_speed), 2)) * 100 AS `Точность` from main.dm_weather_data_distributed dm\r\njoin allrp.ds_dim_owd dim on dm.owd_id = dim.owd_id\r\nJOIN main.dm_forecast_all_data_distributed fcst ON toStartOfFiveMinutes(dm.create_dttm) = toStartOfFiveMinutes(forecast_dttm)\r\n\tAND dm.owd_id = fcst.owd_id\r\n\tAND dm.lang = fcst.lang\r\n\tAND dm.city = fcst.city\r\nwhere owd_name = 'OpenWeatherMap'\r\nand dm.lang = 'ru'\r\nand forecast_diff = 24\r\norder by dm.city\r\nSETTINGS distributed_product_mode = 'allow'",
+          "refId": "A"
+        }
+      ],
+      "title": "Точность прогноза скорости ветра (%) по источнику OpenWeatherMap (по следующему дню)",
+      "transformations": [
+        {
+          "id": "partitionByValues",
+          "options": {
+            "fields": [
+              "city"
+            ],
+            "keepFields": false
+          }
+        }
+      ],
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "grafana-clickhouse-datasource",
+        "uid": "adkreilk9migwa"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "series",
+            "axisLabel": "Точность (%)",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "smooth",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 27
+      },
+      "id": 22,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "grafana-clickhouse-datasource",
+            "uid": "adkreilk9migwa"
+          },
+          "editorType": "sql",
+          "format": 1,
+          "meta": {
+            "builderOptions": {
+              "columns": [],
+              "database": "",
+              "limit": 1000,
+              "mode": "list",
+              "queryType": "table",
+              "table": ""
+            }
+          },
+          "pluginVersion": "4.0.6",
+          "queryType": "table",
+          "rawSql": "SELECT\r\n\tfcst.forecast_dttm,\r\n\tdm.city as city,\r\n\t(1 + floor(IF(dm.wind_speed < fcst.wind_speed,(dm.wind_speed - fcst.wind_speed)/fcst.wind_speed, (fcst.wind_speed - dm.wind_speed)/dm.wind_speed), 2)) * 100 AS `Точность` from main.dm_weather_data_distributed dm\r\njoin allrp.ds_dim_owd dim on dm.owd_id = dim.owd_id\r\nJOIN main.dm_forecast_all_data_distributed fcst ON toStartOfFiveMinutes(dm.create_dttm) = toStartOfFiveMinutes(forecast_dttm)\r\n\tAND dm.owd_id = fcst.owd_id\r\n\tAND dm.lang = fcst.lang\r\n\tAND dm.city = fcst.city\r\nwhere owd_name = 'WeatherApi'\r\nand dm.lang = 'ru'\r\nand forecast_diff = 24\r\norder by dm.city\r\nSETTINGS distributed_product_mode = 'allow'",
+          "refId": "A"
+        }
+      ],
+      "title": "Точность прогноза скорости ветра (%) по источнику WeatherApi (по следующему дню)",
+      "transformations": [
+        {
+          "id": "partitionByValues",
+          "options": {
+            "fields": [
+              "city"
+            ],
+            "keepFields": false
+          }
+        }
+      ],
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "grafana-clickhouse-datasource",
+        "uid": "adkreilk9migwa"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "continuous-RdYlGr"
+          },
+          "mappings": [],
+          "max": 100,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 12,
+        "x": 0,
+        "y": 35
+      },
+      "id": 7,
+      "options": {
+        "displayMode": "lcd",
+        "maxVizHeight": 300,
+        "minVizHeight": 16,
+        "minVizWidth": 8,
+        "namePlacement": "auto",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showUnfilled": true,
+        "sizing": "auto",
+        "valueMode": "color"
+      },
+      "pluginVersion": "10.4.2",
+      "targets": [
+        {
+          "datasource": {
+            "type": "grafana-clickhouse-datasource",
+            "uid": "adkreilk9migwa"
+          },
+          "editorType": "sql",
+          "format": 1,
+          "meta": {
+            "builderOptions": {
+              "columns": [],
+              "database": "",
+              "limit": 1000,
+              "mode": "list",
+              "queryType": "table",
+              "table": ""
+            }
+          },
+          "pluginVersion": "4.0.6",
+          "queryType": "table",
+          "rawSql": "SELECT\r\n\tdm.city as city,\r\n\tfloor(avg((1 + floor(IF(dm.wind_speed < fcst.wind_speed,(dm.wind_speed - fcst.wind_speed)/fcst.wind_speed, (fcst.wind_speed - dm.wind_speed)/dm.wind_speed), 2)) * 100),2) AS `Точность прогноза` from main.dm_weather_data_distributed dm\r\njoin allrp.ds_dim_owd dim on dm.owd_id = dim.owd_id\r\nJOIN main.dm_forecast_all_data_distributed fcst ON toStartOfFiveMinutes(dm.create_dttm) = toStartOfFiveMinutes(forecast_dttm)\r\n\tAND dm.owd_id = fcst.owd_id\r\n\tAND dm.lang = fcst.lang\r\n\tAND dm.city = fcst.city\r\nwhere owd_name = 'OpenWeatherMap'\r\nand dm.lang = 'ru'\r\nand forecast_diff = 24\r\nand forecast_dttm BETWEEN parseDateTime64BestEffortOrZero('${__from:date}') AND parseDateTime64BestEffortOrZero('${__to:date}')\r\ngroup by dm.city\r\norder by `Точность прогноза`\r\nSETTINGS distributed_product_mode = 'allow'",
+          "refId": "A"
+        }
+      ],
+      "title": "Средняя точность прогноза скорости ветра (%) по источнику OpenWeatherMap (по следующему дню)",
+      "transformations": [
+        {
+          "id": "partitionByValues",
+          "options": {
+            "fields": [
+              "city"
+            ],
+            "keepFields": false
+          }
+        }
+      ],
+      "type": "bargauge"
+    },
+    {
+      "datasource": {
+        "type": "grafana-clickhouse-datasource",
+        "uid": "adkreilk9migwa"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "continuous-RdYlGr"
+          },
+          "mappings": [],
+          "max": 100,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 12,
+        "x": 12,
+        "y": 35
+      },
+      "id": 23,
+      "options": {
+        "displayMode": "lcd",
+        "maxVizHeight": 300,
+        "minVizHeight": 16,
+        "minVizWidth": 8,
+        "namePlacement": "auto",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showUnfilled": true,
+        "sizing": "auto",
+        "valueMode": "color"
+      },
+      "pluginVersion": "10.4.2",
+      "targets": [
+        {
+          "datasource": {
+            "type": "grafana-clickhouse-datasource",
+            "uid": "adkreilk9migwa"
+          },
+          "editorType": "sql",
+          "format": 1,
+          "meta": {
+            "builderOptions": {
+              "columns": [],
+              "database": "",
+              "limit": 1000,
+              "mode": "list",
+              "queryType": "table",
+              "table": ""
+            }
+          },
+          "pluginVersion": "4.0.6",
+          "queryType": "table",
+          "rawSql": "SELECT\r\n\tdm.city as city,\r\n\tfloor(avg((1 + floor(IF(dm.wind_speed < fcst.wind_speed,(dm.wind_speed - fcst.wind_speed)/fcst.wind_speed, (fcst.wind_speed - dm.wind_speed)/dm.wind_speed), 2)) * 100),2) AS `Точность прогноза` from main.dm_weather_data_distributed dm\r\njoin allrp.ds_dim_owd dim on dm.owd_id = dim.owd_id\r\nJOIN main.dm_forecast_all_data_distributed fcst ON toStartOfFiveMinutes(dm.create_dttm) = toStartOfFiveMinutes(forecast_dttm)\r\n\tAND dm.owd_id = fcst.owd_id\r\n\tAND dm.lang = fcst.lang\r\n\tAND dm.city = fcst.city\r\nwhere owd_name = 'WeatherApi'\r\nand dm.lang = 'ru'\r\nand forecast_diff = 24\r\nand forecast_dttm BETWEEN parseDateTime64BestEffortOrZero('${__from:date}') AND parseDateTime64BestEffortOrZero('${__to:date}')\r\ngroup by dm.city\r\norder by `Точность прогноза`\r\nSETTINGS distributed_product_mode = 'allow'",
+          "refId": "A"
+        }
+      ],
+      "title": "Средняя точность прогноза скорости ветра (%) по источнику WeatherApi (по следующему дню)",
+      "transformations": [
+        {
+          "id": "partitionByValues",
+          "options": {
+            "fields": [
+              "city"
+            ],
+            "keepFields": false
+          }
+        }
+      ],
+      "type": "bargauge"
+    }
+  ],
+  "schemaVersion": 39,
+  "tags": [],
+  "templating": {
+    "list": []
+  },
+  "time": {
+    "from": "now-2d",
+    "to": "now"
+  },
+  "timepicker": {},
+  "timezone": "browser",
+  "title": "Сравнение прогноза и фактической скорости ветра по городам",
+  "uid": "adllgnpuhiww0d",
+  "version": 14,
+  "weekStart": ""
+}

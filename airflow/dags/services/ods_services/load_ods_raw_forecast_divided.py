@@ -90,7 +90,7 @@ def load_raw_divided_forecast_data(**context) -> None:
     )
     WHERE JSONExtractString(json_string, 'error') = ''
     AND JSONExtractString(json_string, 'cod') in('200','')
-    AND (id, divide_id, owd_id) not in(select id, divide_id, owd_id from allsh.ods_raw_divided_forecast_data_distributed)
+    AND (id, owd_id) not in(select id, owd_id from allsh.ods_raw_divided_forecast_data_distributed)
     SETTINGS distributed_product_mode = 'allow'
     """.format(
         pre_sql=pre_sql
