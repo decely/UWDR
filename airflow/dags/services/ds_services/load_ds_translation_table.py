@@ -178,10 +178,10 @@ def prepare_load_translate_table() -> str:
     values_sql = ''
 
     for x in range(0, row):
-        if values != '':
+        if values_sql != '':
             values_sql = values_sql + ",("
         else:
-            values_sql = "("
+            values_sql = values_sql + "("
         for y in range(0, column):
             if y == 0:
                 values_sql = values_sql + f"'{translate_result[y][x]}'"

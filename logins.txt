@@ -2,6 +2,9 @@ Grafana:
 admin
 UWDR123
 
+Analyst_Arseniy_Frolkin
+UWDR123
+
 Airflow:
 airflow
 airflow
