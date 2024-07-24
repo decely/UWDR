@@ -16,7 +16,7 @@ CREATE TABLE IF NOT EXISTS allrp.ds_dim_owd ON cluster 'all-replicated'
 engine = ReplicatedMergeTree('/clickhouse/tables/all-replicated/ds_dim_owd_v2', '{replica}')
 ORDER BY owd_id;
 --Заполнение операторов
-INSERT INTO 
+INSERT INTO allrp.ds_dim_owd
 VALUES
 (generateUUIDv4(), 'OpenWeatherMap', 'OWM', '9d0b56c67c3632e0a22741c5651aac5d', now()),
 (generateUUIDv4(), 'WeatherApi', 'WA', 'e1a7a445d0bb4648a3d132511242304', now());
